@@ -5,8 +5,8 @@ const Input = (props) => {
     const className = error ?  "form-control is-invalid" : "form-control" ;
     return (
         <div className="form-group">
-            <label>Username</label>
-            <input className={className} name="{name}" onChange={onChange}/>
+            <label>{label}</label>
+            <input className={className} name={name} onChange={onChange}/>
             <div className="invalid-feedback">
                 {error}
             </div>
