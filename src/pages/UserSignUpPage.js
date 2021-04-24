@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios"
 import {signup} from '../api/apiCalls'
+import Input from "../components/input";
 
 class UserSignUpPage extends React.Component {
 
@@ -9,13 +10,16 @@ class UserSignUpPage extends React.Component {
         displayName: null,
         password: null,
         passwordRepeat: null,
-        pendingApiCall: false
+        pendingApiCall: false,
+        errors:{}
     };
 
     onChange = event => {
 
         const {name, value} = event.target;
-        this.setState({[name]: value});
+        const errors = {...this.state.errors};
+        errors[name] = undefined;
+        this.setState({[name]: value, errors});
     };
 
     onClickSignup = async event => {
@@ -29,7 +33,9 @@ class UserSignUpPage extends React.Component {
         try{
             const response = await signup(body);
         }catch (error){
-
+            if(error.response.data.validationErrors){
+                this.setState({errors: error.response.data.validationErrors});
+            }
         }
         this.setState({pendingApiCall: false});
        /*     .then((response) => {
@@ -57,18 +63,27 @@ class UserSignUpPage extends React.Component {
     };*/
 
     render() {
-        const {pendingApiCall} = this.state;
+        const {pendingApiCall, errors} = this.state;
+        const {username, displayName} = errors;
+
         return (
             <div className="container">
                 <form>
                     <h1 className="text-center">Sign Up</h1>
-                    <div className="form-group">
+                    <Input name="username" label="UserName" error={username} onChange={this.onChange}/>
+                    {/*<div className="form-group">
                         <label>Username</label>
-                        <input className="form-control" name="username" onChange={this.onChange}/>
-                    </div>
+                        <input className={username ? "form-control is-invalid" : "form-control"} name="username" onChange={this.onChange}/>
+                        <div className="invalid-feedback">
+                            {username}
+                        </div>
+                    </div>*/}
                     <div className="form-group">
                         <label>Display Name</label>
-                        <input className="form-control" name="displayName" onChange={this.onChange}/>
+                        <input className={displayName ? "form-control is-invalid" : "form-control"} name="displayName" onChange={this.onChange}/>
+                        <div className="invalid-feedback">
+                            {displayName}
+                        </div>
                     </div>
                     <div className="form-group">
                         <label>Password</label>
