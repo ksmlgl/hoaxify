@@ -10,6 +10,7 @@
 
 # production
 /build
+package-log.json
 
 # misc
 .DS_Store
