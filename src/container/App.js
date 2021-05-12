@@ -10,14 +10,10 @@ function App() {
   
       <div className="row">
         <div className="col">
-          <ApiProgress path="/api/1.0/users">
             <UserSignUpPage />
-          </ApiProgress>
         </div>
         <div className="col">
-          <ApiProgress path="/api/1.0/auth">
             <LoginPage />
-          </ApiProgress>
         </div>
       <LanguageSelector/>
       </div>
