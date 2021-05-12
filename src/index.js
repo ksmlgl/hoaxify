@@ -3,15 +3,17 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import './bootstrap-override.scss';
 import App from './App';
-import LoginPage from './pages/LoginPage';
 import UserSignUpPage from './pages/UserSignUpPage';
 
 import reportWebVitals from './reportWebVitals';
 import './i18n';
 import LanguageSelector from './components/LanguageSelector'
+import ApiProgress from './shared/ApiProgress'
 
 ReactDOM.render(<div>
+  <ApiProgress>
     <UserSignUpPage />
+  </ApiProgress>
     <LanguageSelector/>
     </div>,
   document.getElementById('root')

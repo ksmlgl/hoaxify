@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Input from '../components/input'
 import {withTranslation} from 'react-i18next'
 import {login} from '../api/apiCalls'
-import axios from 'axios'
 import ButtonWithProgress from '../components/ButtonWithProgress'
 
 class LoginPage extends React.Component {
@@ -10,25 +9,7 @@ class LoginPage extends React.Component {
 state ={
     username:null,
     password:null,
-    error:null,
-    pendingApiCall:false
-}
-
-componentDidMount(){
-    axios.interceptors.request.use((request) => {
-        this.setState({pendingApiCall:true});
-        return request;
-
-    })
-  
-    axios.interceptors.response.use(response=>{
-        this.setState({pendingApiCall:false});
-        return response;
-    }, error=>{
-        this.setState({pendingApiCall:false});
-        throw error;
-    }
-    );
+    error:null
 }
 
 onChange = event => {
@@ -53,8 +34,8 @@ onClickLogin = async event => {
 }
 
     render() {
-        const {t} = this.props;
-        const{username, password, error, pendingApiCall} = this.state;
+        const {t, pendingApiCall} = this.props;
+        const{username, password, error} = this.state;
         const buttonEnabled = username && password && !error;
         return (
             <div className="container">
@@ -64,7 +45,7 @@ onClickLogin = async event => {
                     <Input label={t("Password")} name="password" type="password" onChange={this.onChange}></Input>
                     {this.state.error && 
                     <div className="alert alert-danger">
-                       {t('this.state.error')}
+                       {this.state.error}
                     </div>
                     }
                     <div className="text-center">
