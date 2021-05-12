@@ -1,8 +1,9 @@
 import React from "react";
 import axios from "axios"
-import {signup, changeLanguage} from '../api/apiCalls'
+import {signup} from '../api/apiCalls'
 import Input from "../components/input";
 import {withTranslation} from 'react-i18next';
+import ButtonWithProgress from '../components/ButtonWithProgress'
 
 class UserSignUpPage extends React.Component {
 
@@ -73,12 +74,7 @@ class UserSignUpPage extends React.Component {
         this.setState({passwordRepeat:event.target.value});
     };*/
 
-    onChangeLanguage = language => {
-        const {i18n} = this.props;
-        i18n.changeLanguage(language);
-        changeLanguage(language);
-
-    }
+    
     render() {
         const {t} = this.props
         const {pendingApiCall, errors} = this.state;
@@ -93,16 +89,12 @@ class UserSignUpPage extends React.Component {
                     <Input name="passwordRepeat" label={t('Password Repeat')} error={passwordRepeat} onChange={this.onChange} type="password"/>
 
                     <div className="text-center">
-                        <button className="btn btn-primary" onClick={this.onClickSignup}
-                                disabled={this.state.pendingApiCall || passwordRepeat !== undefined}>
-                            {pendingApiCall && <span className="spinner-border spinner-border-sm"></span>}
-                            {t('Sign Up')}
-                        </button>
+
+                        <ButtonWithProgress className="btn btn-primary" onClick={this.onClickSignup}
+                                disabled={pendingApiCall || passwordRepeat !== undefined} text={t('Sign Up')} pendingApiCall={pendingApiCall}>
+                        </ButtonWithProgress>
                     </div>
-                    <div>
-                        <img src="https://flagcdn.com/16x12/tr.png" alt="Turkish Flag" onClick={() => this.onChangeLanguage('tr')} style={{cursor:'pointer'}}></img>
-                        <img src="https://flagcdn.com/16x12/us.png" alt="USA Flag" onClick={() => this.onChangeLanguage('en')} style={{cursor:'pointer'}}></img>
-                    </div>
+                    
                 </form>
             </div>
         );

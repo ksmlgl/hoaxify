@@ -4,12 +4,14 @@ import './index.css';
 import './bootstrap-override.scss';
 import App from './App';
 import LoginPage from './pages/LoginPage';
+import UserSignUpPage from './pages/UserSignUpPage';
+
 import reportWebVitals from './reportWebVitals';
 import './i18n';
 import LanguageSelector from './components/LanguageSelector'
 
 ReactDOM.render(<div>
-    <LoginPage />
+    <UserSignUpPage />
     <LanguageSelector/>
     </div>,
   document.getElementById('root')
