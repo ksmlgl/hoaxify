@@ -27,8 +27,10 @@ onClickLogin = async event => {
     const creds = {
         username,password
     }
+    const {push} = this.props.history;
     try{
         await login(creds);
+        push('/');
     }catch(apiError){
         this.setState({error:apiError.response.data.message});
     }

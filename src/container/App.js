@@ -6,22 +6,25 @@ import LoginPage from '../pages/LoginPage'
 import LanguageSelector from '../components/LanguageSelector'
 import HomePage from '../pages/HomePage'
 import UserPage from '../pages/UserPage'
-import { HashRouter, Route, Redirect, Switch } from 'react-router-dom'
+import { HashRouter as Router, Route, Redirect, Switch } from 'react-router-dom'
+import TopBar from '../components/TopBar'
 
 
 function App() {
   return (
 
     <div>
-      <HashRouter>
-        <Switch>        <Route exact path="/" component={HomePage} />
+      <Router>
+        <TopBar/>
+        <Switch>        
+          <Route exact path="/" component={HomePage} />
           <Route path="/login" component={LoginPage} />
           <Route path="/signup" component={UserSignUpPage} />
           <Route path="/user/:username" component={UserPage} />
           <Redirect to="/" />
         </Switch>
 
-      </HashRouter>
+      </Router>
       <LanguageSelector />
     </div>
 
