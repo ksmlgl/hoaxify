@@ -5,7 +5,6 @@ import './bootstrap-override.scss';
 import App from './container/App'
 import reportWebVitals from './reportWebVitals';
 import './i18n';
-import LanguageSelector from './components/LanguageSelector'
 
 ReactDOM.render(
   

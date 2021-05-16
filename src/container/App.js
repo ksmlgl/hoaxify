@@ -10,25 +10,43 @@ import { HashRouter as Router, Route, Redirect, Switch } from 'react-router-dom'
 import TopBar from '../components/TopBar'
 
 
-function App() {
-  return (
+class App extends React.Component {
 
-    <div>
-      <Router>
-        <TopBar/>
-        <Switch>        
-          <Route exact path="/" component={HomePage} />
-          <Route path="/login" component={LoginPage} />
-          <Route path="/signup" component={UserSignUpPage} />
-          <Route path="/user/:username" component={UserPage} />
-          <Redirect to="/" />
-        </Switch>
+  state = {
+    isLoggedIn: false,
+    username: undefined
+  }
 
-      </Router>
-      <LanguageSelector />
-    </div>
+  onLoginSuccess = (username) => {
+    this.setState({ username, isLoggedIn: true })
+  }
 
-  );
+  onLogoutSuccess = () => {
+    this.setState({ username: undefined, isLoggedIn: false })
+  }
+
+  render() {
+    const { isLoggedIn, username } = this.state;
+    return (
+      <div>
+        <Router>
+          <TopBar username={username} isLoggedIn={isLoggedIn} onLogoutSuccess={this.onLogoutSuccess} />
+          <Switch>
+            <Route exact path="/" component={HomePage} />
+            {!isLoggedIn && (<Route path="/login" component={(props) => {
+              return <LoginPage {...props} onLoginSuccess={this.onLoginSuccess} />
+            }} />)}
+            <Route path="/signup" component={UserSignUpPage} />
+            <Route path="/user/:username" component={UserPage} />
+            <Redirect to="/" />
+          </Switch>
+
+        </Router>
+        <LanguageSelector />
+      </div>
+
+    );
+  }
 }
 
 export default App;
