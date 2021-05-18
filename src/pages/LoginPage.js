@@ -32,14 +32,16 @@ onClickLogin = async event => {
 
     const { history, dispatch} = this.props;
     const { push } = history;
+    this.setState({
+        error:null
+    });
     try{
-       
         await dispatch(loginHandler(creds));
         push('/');
     }catch(apiError){
         this.setState({error:apiError.response.data.message});
     }
-}
+};
 
     render() {
         const {t, pendingApiCall} = this.props;
