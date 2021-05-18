@@ -9,14 +9,14 @@ import UserPage from '../pages/UserPage'
 import { HashRouter as Router, Route, Redirect, Switch } from 'react-router-dom'
 import TopBar from '../components/TopBar'
 // import {Authentication} from '../shared/AuthenticationContext'
+import {connect} from 'react-redux'
 
 
 class App extends React.Component {
 
  //  static contextType = Authentication;
   render() {
-    const isLoggedIn = false;
-    const username = undefined;
+    const {isLoggedIn} = this.props;
 
     // const {isLoggedIn, username}=this.state;
     return (
@@ -39,4 +39,10 @@ class App extends React.Component {
   }
 }
 
-export default App;
+const mapStateToProps = (store) => {
+  return {
+      isLoggedIn: store.isLoggedIn
+  }
+};
+
+export default connect(mapStateToProps)(App);
