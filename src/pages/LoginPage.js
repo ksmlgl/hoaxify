@@ -1,74 +1,65 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Input from '../components/input'
-import {withTranslation} from 'react-i18next'
+import { withTranslation } from 'react-i18next'
 import ButtonWithProgress from '../components/ButtonWithProgress'
 import { withApiProgress } from '../shared/ApiProgress';
 // import {Authentication} from '../shared/AuthenticationContext'
-import {connect} from 'react-redux'
-import {loginHandler} from '../redux/authActions'
+import { connect } from 'react-redux'
+import { loginHandler } from '../redux/authActions'
 
-class LoginPage extends React.Component {
-// static contextType = Authentication;
-state ={
-    username:null,
-    password:null,
-    error:null
-}
+const LoginPage = (props) => {
+    // static contextType = Authentication;
 
-onChange = event => {
-    const {name, value}=event.target;
-    this.setState({
-        [name]:value,
-        error:null
-    })
-}
+    const [username, setUsername] = useState();
+    const [password, setPassword] = useState();
+    const [error, setError] = useState();
+    useEffect(() => {
+        setError(undefined);
+    }, [username, password]);
 
-onClickLogin = async event => {
-    event.preventDefault();
-    const {username, password} = this.state;
-    const creds = {
-        username,password
-    }
 
-    const { history, dispatch} = this.props;
-    const { push } = history;
-    this.setState({
-        error:null
-    });
-    try{
-        await dispatch(loginHandler(creds));
-        push('/');
-    }catch(apiError){
-        this.setState({error:apiError.response.data.message});
-    }
-};
+    const onClickLogin = async event => {
+        event.preventDefault();
+        const creds = {
+            username, password
+        }
 
-    render() {
-        const {t, pendingApiCall} = this.props;
-        const{username, password, error} = this.state;
-        const buttonEnabled = username && password && !error;
-        return (
-            <div className="container">
-                <form>
-                    <h1 className="text-center">{t('Login')}</h1>
-                    <Input label={t("Username")} name="username" onChange={this.onChange}></Input>
-                    <Input label={t("Password")} name="password" type="password" onChange={this.onChange}></Input>
-                    {this.state.error && 
+        const { history, dispatch } = props;
+        const { push } = history;
+        setError(undefined);
+        try {
+            await dispatch(loginHandler(creds));
+            push('/');
+        } catch (apiError) {
+            setError(apiError.response.data.message);
+        }
+    };
+
+    const { t, pendingApiCall } = props;
+
+    const buttonEnabled = username && password && !error;
+    return (
+        <div className="container">
+            <form>
+                <h1 className="text-center">{t('Login')}</h1>
+                <Input label={t("Username")} onChange={(event) => { setUsername(event.target.value);  }}></Input>
+                <Input label={t("Password")} type="password" onChange={(event) => { setPassword(event.target.value); }}></Input>
+                {error &&
                     <div className="alert alert-danger">
-                       {this.state.error}
+                        {error}
                     </div>
-                    }
-                    <div className="text-center">
-                    <ButtonWithProgress onClick={this.onClickLogin} disabled={!buttonEnabled || pendingApiCall} pendingApiCall={pendingApiCall} text={t('Login')}></ButtonWithProgress>
-                    </div>
-                </form>
-                
-            </div>
-        );
-    }
+                }
+                <div className="text-center">
+                    <ButtonWithProgress onClick={onClickLogin} disabled={!buttonEnabled || pendingApiCall} pendingApiCall={pendingApiCall} text={t('Login')}></ButtonWithProgress>
+                </div>
+            </form>
+
+        </div>
+    );
+
 }
 
 const LoginPageWithTranslation = withTranslation()(LoginPage);
 
 
-export default connect()(withApiProgress(LoginPageWithTranslation,'/api/1.0/auth'));
+export default connect()(withApiProgress(LoginPageWithTranslation, '/api/1.0/auth'));
