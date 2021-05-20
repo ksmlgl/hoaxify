@@ -8,7 +8,6 @@ import HomePage from '../pages/HomePage'
 import UserPage from '../pages/UserPage'
 import { HashRouter as Router, Route, Redirect, Switch } from 'react-router-dom'
 import TopBar from '../components/TopBar'
-// import {Authentication} from '../shared/AuthenticationContext'
 import {connect} from 'react-redux'
 
 

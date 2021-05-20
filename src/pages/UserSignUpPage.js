@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import { signup } from '../api/apiCalls'
 import Input from "../components/input";
 import { withTranslation } from 'react-i18next';
@@ -7,41 +7,43 @@ import { withApiProgress } from "../shared/ApiProgress";
 import { connect } from 'react-redux'
 import { loginHandler, signupHandler } from '../redux/authActions'
 
-class UserSignUpPage extends React.Component {
+const UserSignUpPage = (props) => {
 
-    state = {
+    const [form, setForm] = useState({
         username: null,
         displayName: null,
         password: null,
         passwordRepeat: null,
         errors: {}
-    };
+    })
 
-    onChange = event => {
+    const [errors, setErrors] = useState({});
+
+    // state = {
+    //     username: null,
+    //     displayName: null,
+    //     password: null,
+    //     passwordRepeat: null,
+    //     errors: {}
+    // };
+
+    const onChange = event => {
 
         const { name, value } = event.target;
-        const errors = { ...this.state.errors };
-        const { t } = this.props;
-        errors[name] = undefined;
-        if (name === 'password' || name === 'passwordRepeat') {
-            if (name === 'password' && value !== this.state.passwordRepeat) {
-                errors.passwordRepeat = t('Password mismatch');
-            } else if (name === 'passwordRepeat' && value !== this.state.password) {
-                errors.passwordRepeat = t('Password mismatch');
-            } else {
-                errors.passwordRepeat = undefined;
-            }
-        }
-        this.setState({ [name]: value, errors });
+
+        const errorsCopy = { ...errors };
+        errorsCopy[name] = undefined;
+        setErrors((previousError) => ({ ...previousError, [name] :undefined}));
+        setForm((previousForm) => ({ ...previousForm, [name]: value }));
     };
 
-    onClickSignup = async event => {
+    const onClickSignup = async event => {
         event.preventDefault();
 
-        const { history, dispatch } = this.props;
+        const { history, dispatch } = props;
         const { push } = history;
 
-        const { username, displayName, password } = this.state;
+        const { username, displayName, password } = form;
 
         const body = { username, displayName, password };
 
@@ -50,36 +52,40 @@ class UserSignUpPage extends React.Component {
             push('/');
         } catch (error) {
             if (error.response.data.validationErrors) {
-                this.setState({ errors: error.response.data.validationErrors });
+                // this.setState({ errors: error.response.data.validationErrors });
+                setErrors(error.response.data.validationErrors);
             }
         }
 
     };
 
-    render() {
-        const { t, pendingApiCall } = this.props
-        const { errors } = this.state;
-        const { username, displayName, password, passwordRepeat } = errors;
-        return (
-            <div className="container">
-                <form>
-                    <h1 className="text-center">{t('Sign Up')}</h1>
-                    <Input name="username" label={t('User Name')} error={username} onChange={this.onChange} />
-                    <Input name="displayName" label={t('Display Name')} error={displayName} onChange={this.onChange} />
-                    <Input name="password" label={t('Password')} error={password} onChange={this.onChange} type="password" />
-                    <Input name="passwordRepeat" label={t('Password Repeat')} error={passwordRepeat} onChange={this.onChange} type="password" />
+    const { username: usernameError, displayName: displayNameError, password: passwordError } = errors;
+    const { t, pendingApiCall } = props;
 
-                    <div className="text-center">
+    let passwordRepeatError;
+    if(form.password !== form.passwordRepeat){
+        passwordRepeatError = t('Password mismatch');
+    } 
+    
+    return (
+        <div className="container">
+            <form>
+                <h1 className="text-center">{t('Sign Up')}</h1>
+                <Input name="username" label={t('User Name')} error={usernameError} onChange={onChange} />
+                <Input name="displayName" label={t('Display Name')} error={displayNameError} onChange={onChange} />
+                <Input name="password" label={t('Password')} error={passwordError} onChange={onChange} type="password" />
+                <Input name="passwordRepeat" label={t('Password Repeat')} error={passwordRepeatError} onChange={onChange} type="password" />
 
-                        <ButtonWithProgress className="btn btn-primary" onClick={this.onClickSignup}
-                            disabled={pendingApiCall || passwordRepeat !== undefined} text={t('Sign Up')} pendingApiCall={pendingApiCall}>
-                        </ButtonWithProgress>
-                    </div>
+                <div className="text-center">
 
-                </form>
-            </div>
-        );
-    }
+                    <ButtonWithProgress className="btn btn-primary" onClick={onClickSignup}
+                        disabled={pendingApiCall || passwordRepeatError !== undefined} text={t('Sign Up')} pendingApiCall={pendingApiCall}>
+                    </ButtonWithProgress>
+                </div>
+
+            </form>
+        </div>
+    );
 }
 
 const UserSignUpPageWithApiProgressForSignupRequest = withApiProgress(UserSignUpPage, '/api/1.0/users');
