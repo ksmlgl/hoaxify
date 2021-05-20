@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { withRouter } from 'react-router-dom'
-// import { Authentication } from '../shared/AuthenticationContext'
+import { Authentication } from '../shared/AuthenticationContext'
 import {connect} from 'react-redux'
 
 const ProfileCard = (props) => {
+
+    const context = useContext(Authentication);
+
     const pathUserName = props.match.params.username;
     let message = "We cannot edit";
-    if (pathUserName === props.loggedInUsername) {
+    if (pathUserName === context.state.username) {
         message = "We can edit";
     }
     return (
@@ -29,10 +32,12 @@ class ProfileCardContextWrapper extends React.Component {
 }
 */
 
-const mapStateToProps = (store) => {
-    return {
-        loggedInUsername: store.username
-    }
-};
+// const mapStateToProps = (store) => {
+//     return {
+//         loggedInUsername: store.username
+//     }
+// };
 
-export default connect(mapStateToProps)(withRouter(ProfileCard));
+// export default connect(mapStateToProps)(withRouter(ProfileCard));
+
+export default withRouter(ProfileCard);
