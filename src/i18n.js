@@ -14,7 +14,9 @@ i18n.use(initReactI18next).init({
                 Login:'Login',
                 'Unauthorized': 'Unauthorized',
                 'Logout': 'Logout',
-                'Users':'Users'
+                'Users':'Users',
+                'Next': 'Next >',
+                'Previous': '< Previous'
             }
         },
         tr:{
@@ -28,7 +30,9 @@ i18n.use(initReactI18next).init({
                 'Login': 'Sisteme Gir',
                 'Unauthorized': 'Yetkisiz',
                 'Logout': 'Çık',
-                'Users':'Kullanıcılar'
+                'Users':'Kullanıcılar',
+                'Next': 'Sonraki >',
+                'Previous': '< Önceki'
             }
         }
     },
