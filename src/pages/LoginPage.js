@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Input from '../components/input'
-import { withTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import ButtonWithProgress from '../components/ButtonWithProgress'
 import { withApiProgress } from '../shared/ApiProgress';
 // import {Authentication} from '../shared/AuthenticationContext'
-import { connect } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { loginHandler } from '../redux/authActions'
 
 const LoginPage = (props) => {
@@ -13,6 +13,8 @@ const LoginPage = (props) => {
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
     const [error, setError] = useState();
+    const dispatch  = useDispatch();
+
     useEffect(() => {
         setError(undefined);
     }, [username, password]);
@@ -24,7 +26,7 @@ const LoginPage = (props) => {
             username, password
         }
 
-        const { history, dispatch } = props;
+        const { history } = props;
         const { push } = history;
         setError(undefined);
         try {
@@ -35,14 +37,15 @@ const LoginPage = (props) => {
         }
     };
 
-    const { t, pendingApiCall } = props;
+    const {  pendingApiCall } = props;
+    const { t } = useTranslation();
 
     const buttonEnabled = username && password && !error;
     return (
         <div className="container">
             <form>
                 <h1 className="text-center">{t('Login')}</h1>
-                <Input label={t("Username")} onChange={(event) => { setUsername(event.target.value);  }}></Input>
+                <Input label={t("User Name")} onChange={(event) => { setUsername(event.target.value);  }}></Input>
                 <Input label={t("Password")} type="password" onChange={(event) => { setPassword(event.target.value); }}></Input>
                 {error &&
                     <div className="alert alert-danger">
@@ -59,7 +62,6 @@ const LoginPage = (props) => {
 
 }
 
-const LoginPageWithTranslation = withTranslation()(LoginPage);
 
 
-export default connect()(withApiProgress(LoginPageWithTranslation, '/api/1.0/auth'));
+export default (withApiProgress(LoginPage, '/api/1.0/auth'));
