@@ -1,7 +1,9 @@
 package com.hoxify.ws.user;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.hoxify.ws.error.ApiError;
 import com.hoxify.ws.shared.GenericResponse;
+import com.hoxify.ws.shared.Views;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +38,11 @@ public class UserController {
 		userService.save(user);
 		return new GenericResponse("User created");
 
+	}
+
+	@GetMapping(value="/api/1.0/users")
+	@JsonView(Views.Base.class)
+	List<User> getUsers(){
+		return userService.getUsers();
 	}
 }

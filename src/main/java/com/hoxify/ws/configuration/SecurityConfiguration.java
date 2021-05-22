@@ -30,12 +30,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	UserAuthService userAuthService;
 
-
-
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable();
-
+		http.headers().frameOptions().sameOrigin();
 		http.httpBasic().authenticationEntryPoint(new AuthEntryPoint());
 		http
 				.authorizeRequests().antMatchers(HttpMethod.POST, "/api/1.0/auth").authenticated()
