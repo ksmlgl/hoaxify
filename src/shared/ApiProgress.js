@@ -9,7 +9,7 @@ export const useApiProgress = (apiPath) => {
         const updateApiCallFor = (url, inProgress) => {
             if (url === apiPath) {
                 setPendingApiCall(inProgress);
-            }
+        }
         }
 
         const registerInterceptors = () => {

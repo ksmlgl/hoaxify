@@ -11,8 +11,13 @@ const LanguageSelector = (props) => {
     }
     return (
         <div className="container">
-            <img src="https://flagcdn.com/16x12/tr.png" alt="Turkish Flag" onClick={() => onChangeLanguage('tr')} style={{ cursor: 'pointer' }}></img>
-            <img src="https://flagcdn.com/16x12/us.png" alt="USA Flag" onClick={() => onChangeLanguage('en')} style={{ cursor: 'pointer' }}></img>
+            <span className="pl-2">
+                <img src="https://flagcdn.com/16x12/tr.png" alt="Turkish Flag" onClick={() => onChangeLanguage('tr')} style={{ cursor: 'pointer' }}></img>
+
+            </span>
+            <span className="pl-2">
+                <img src="https://flagcdn.com/16x12/us.png" alt="USA Flag" onClick={() => onChangeLanguage('en')} style={{ cursor: 'pointer' }}></img>
+            </span>
 
         </div>
     );

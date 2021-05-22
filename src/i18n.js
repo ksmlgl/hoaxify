@@ -13,7 +13,8 @@ i18n.use(initReactI18next).init({
                 'Password Repeat': 'Password Repeat',
                 Login:'Login',
                 'Unauthorized': 'Unauthorized',
-                'Logout': 'Logout'
+                'Logout': 'Logout',
+                'Users':'Users'
             }
         },
         tr:{
@@ -26,7 +27,8 @@ i18n.use(initReactI18next).init({
                 'Password Repeat': 'Şifre Tekrarla',
                 'Login': 'Sisteme Gir',
                 'Unauthorized': 'Yetkisiz',
-                'Logout': 'Çık'
+                'Logout': 'Çık',
+                'Users':'Kullanıcılar'
             }
         }
     },
