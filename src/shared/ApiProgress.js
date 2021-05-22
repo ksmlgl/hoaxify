@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios'
 
-export const useApiProgress = (apiPath) => {
+export const useApiProgress = apiPath => {
     const [pendingApiCall, setPendingApiCall] = useState(false);
 
     useEffect(() => {
+        console.log('axios interceptor count ', axios.interceptors.request.handlers.length);
         let requestInterceptor, responseInterceptor;
         const updateApiCallFor = (url, inProgress) => {
             if (url === apiPath) {
                 setPendingApiCall(inProgress);
-        }
+            }
         }
 
         const registerInterceptors = () => {
@@ -41,7 +42,7 @@ export const useApiProgress = (apiPath) => {
         return function unmount() {
             unregisterInterceptors();
         }
-    });
+    }, []);
 
 
     return pendingApiCall;
