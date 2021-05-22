@@ -1,7 +1,7 @@
 import * as ACTIONS from './Constants'
 import { login, signup } from '../api/apiCalls'
-export const logoutSuccess = () => {
 
+export const logoutSuccess = () => {
     return {
         type: ACTIONS.LOGOUT_SUCCESS
     };

@@ -3,8 +3,6 @@ import { getUsers } from '../api/apiCalls'
 import { useTranslation } from 'react-i18next'
 import UserListItem from './UserListItem';
 
-
-
 const UserList = () => {
 
     const [page, setPage] = useState({
