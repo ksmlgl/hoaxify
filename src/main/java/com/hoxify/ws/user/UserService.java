@@ -24,7 +24,7 @@ public class UserService {
 
 	PasswordEncoder passwordEncoder;
 
-	public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder) {
+	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 	}
@@ -34,7 +34,10 @@ public class UserService {
 		userRepository.save(user);
 	}
 
-	public Page<UserVM> getUsers(Pageable page) {
-		return userRepository.findAll(page).map(UserVM::new);
+	public Page<User> getUsers(Pageable page, User user) {
+		if (user != null) {
+			return userRepository.findByUsernameNot(user.getUsername(), page);
+		}
+		return userRepository.findAll(page);
 	}
 }

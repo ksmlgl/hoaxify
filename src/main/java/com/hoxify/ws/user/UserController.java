@@ -1,5 +1,6 @@
 package com.hoxify.ws.user;
 
+import com.hoxify.ws.shared.CurrentUser;
 import com.hoxify.ws.shared.GenericResponse;
 import com.hoxify.ws.user.vm.UserVM;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class UserController {
 	}
 
 	@GetMapping(value="/api/1.0/users")
-	Page<UserVM> getUsers(Pageable page){
-		return userService.getUsers(page);
+	Page<UserVM> getUsers(Pageable page, @CurrentUser User user){
+		return userService.getUsers(page, user).map(UserVM::new);
 	}
 }
