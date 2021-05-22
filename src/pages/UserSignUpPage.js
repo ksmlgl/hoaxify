@@ -3,7 +3,7 @@ import { signup } from '../api/apiCalls'
 import Input from "../components/input";
 import { useTranslation } from 'react-i18next';
 import ButtonWithProgress from '../components/ButtonWithProgress'
-import { withApiProgress } from "../shared/ApiProgress";
+import { useApiProgress } from "../shared/ApiProgress";
 import { useDispatch, } from 'react-redux'
 import { loginHandler, signupHandler } from '../redux/authActions'
 
@@ -63,7 +63,10 @@ const UserSignUpPage = (props) => {
 
     const { t } = useTranslation();
     const { username: usernameError, displayName: displayNameError, password: passwordError } = errors;
-    const {  pendingApiCall } = props;
+    const pendingApiCallSignup  = useApiProgress('/api/1.0/users');
+    const pendingApiCallLogin  = useApiProgress('/api/1.0/login');
+
+    const pendingApiCall = pendingApiCallSignup || pendingApiCallLogin;
 
 
     let passwordRepeatError;
@@ -92,8 +95,4 @@ const UserSignUpPage = (props) => {
     );
 }
 
-const UserSignUpPageWithApiProgressForSignupRequest = withApiProgress(UserSignUpPage, '/api/1.0/users');
-
-const UserSignUpPageWithApiProgressForAuthRequest = withApiProgress(UserSignUpPageWithApiProgressForSignupRequest, '/api/1.0/auth');
-
-export default UserSignUpPageWithApiProgressForAuthRequest;
+export default UserSignUpPage;
