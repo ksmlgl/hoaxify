@@ -5,10 +5,9 @@ export const useApiProgress = apiPath => {
     const [pendingApiCall, setPendingApiCall] = useState(false);
 
     useEffect(() => {
-        console.log('axios interceptor count ', axios.interceptors.request.handlers.length);
         let requestInterceptor, responseInterceptor;
         const updateApiCallFor = (url, inProgress) => {
-            if (url === apiPath) {
+            if (url.startsWith(apiPath)) {
                 setPendingApiCall(inProgress);
             }
         }
