@@ -19,12 +19,13 @@ import javax.validation.Valid;
  */
 
 @RestController
+@RequestMapping("/api/1.0")
 public class UserController {
 
 	@Autowired
 	UserService userService;
 
-	@PostMapping(value = "/api/1.0/users", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/users", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	public GenericResponse createUser(@Valid @RequestBody User user){
 		userService.save(user);
@@ -32,8 +33,16 @@ public class UserController {
 
 	}
 
-	@GetMapping(value="/api/1.0/users")
+	@GetMapping(value="/users")
 	Page<UserVM> getUsers(Pageable page, @CurrentUser User user){
 		return userService.getUsers(page, user).map(UserVM::new);
 	}
+
+	@GetMapping(value="/users/{username}")
+	UserVM getUser(@PathVariable String username){
+		User user = userService.getByUsername(username);
+		return new UserVM(user);
+	}
+
+
 }

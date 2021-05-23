@@ -1,5 +1,6 @@
 package com.hoxify.ws.user;
 
+import com.hoxify.ws.error.NotFoundException;
 import com.hoxify.ws.user.vm.UserVM;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,5 +40,14 @@ public class UserService {
 			return userRepository.findByUsernameNot(user.getUsername(), page);
 		}
 		return userRepository.findAll(page);
+	}
+
+	public User getByUsername(String username) {
+
+		User inDb = userRepository.findByUsername(username);
+		if(inDb == null){
+			throw new NotFoundException();
+		}
+		return  inDb;
 	}
 }
