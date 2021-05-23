@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'
 // import { Authentication } from '../shared/AuthenticationContext'
 import { useSelector } from 'react-redux'
@@ -8,10 +8,24 @@ import Input from '../components/input'
 const ProfileCard = (props) => {
 
     const [inEditMode, setInEditMode] = useState(false);
+    const [updatedDisplayName, setUpdatedDisplayName] = useState();
     const { username: loggedInUsername } = useSelector((store) => ({ username: store.username }))
     const routeParams = useParams();
 
     const { t } = useTranslation();
+
+    useEffect(() => {
+        if (!inEditMode) {
+            setUpdatedDisplayName(undefined);
+        } else {
+            setUpdatedDisplayName(displayName);
+        }
+    }, [inEditMode, displayName]);
+
+
+    const onClickSave = () => {
+        console.log(updatedDisplayName);
+    }
 
     const { user } = props;
     const { username, displayName, image } = user;
@@ -47,13 +61,13 @@ const ProfileCard = (props) => {
                     (
                         <div>
 
-                            <Input label={t("Change Display Name")}/>
+                            <Input label={t("Change Display Name")} defaultValue={displayName} onChange={(event) => { setUpdatedDisplayName(event.target.value) }} />
                             <div>
-                                <button className="btn btn-primary d-inline-flex">
+                                <button className="btn btn-primary d-inline-flex" onClick={onClickSave}>
                                     <span className="material-icons">save</span>
                                     {t('Save')}
                                 </button>
-                                <button className="btn btn-light d-inline-flex ml-1" onClick={()=>setInEditMode(false)}>
+                                <button className="btn btn-light d-inline-flex ml-1" onClick={() => setInEditMode(false)}>
                                     <span class="material-icons">close </span>
                                     {t('Cancel')}
                                 </button>
