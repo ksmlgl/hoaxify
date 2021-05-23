@@ -1,17 +1,11 @@
 package com.hoxify.ws.user;
 
 import com.hoxify.ws.error.NotFoundException;
-import com.hoxify.ws.user.vm.UserVM;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.hoxify.ws.user.vm.UserUpdateVM;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.function.Function;
 
 /**
  * @author KSM
@@ -43,11 +37,16 @@ public class UserService {
 	}
 
 	public User getByUsername(String username) {
-
 		User inDb = userRepository.findByUsername(username);
-		if(inDb == null){
+		if (inDb == null) {
 			throw new NotFoundException();
 		}
-		return  inDb;
+		return inDb;
+	}
+
+	public User updateUser(String username, UserUpdateVM updatedUser) {
+		User inDB = getByUsername(username);
+		inDB.setDisplayName(updatedUser.getDisplayName());
+		return userRepository.save(inDB);
 	}
 }
