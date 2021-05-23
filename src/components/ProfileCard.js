@@ -17,9 +17,17 @@ const ProfileCard = (props) => {
 
     const [user, setUser] = useState({});
 
+    const [editable, setEditable] = useState(false);
+
+    const pathUserName = routeParams.username;
+
     useEffect(() => {
         setUser(props.user)
-    }, [props.user])
+    }, [props.user]);
+
+    useEffect(() => {
+        setEditable(pathUserName === loggedInUsername);
+    }, [pathUserName, loggedInUsername]);
 
     const { username, displayName, image } = user;
     const { t } = useTranslation();
@@ -49,8 +57,7 @@ const ProfileCard = (props) => {
 
     const pendingApiCall = useApiProgress('put', '/api/1.0/users/' + username);
 
-    const pathUserName = routeParams.username;
-    const editable = pathUserName === loggedInUsername;
+
 
     return (
         <div className="card text-center">
@@ -69,9 +76,9 @@ const ProfileCard = (props) => {
                             <h3>{displayName}@{username}</h3>
                             {editable &&
                                 <button className="btn btn-success d-inline-flex" onClick={() => setInEditMode(true)}>
-                                <span className="material-icons">edit</span>
-                                {t('Edit')}
-                            </button>}
+                                    <span className="material-icons">edit</span>
+                                    {t('Edit')}
+                                </button>}
                         </>)
                 }
                 {inEditMode &&
@@ -93,8 +100,8 @@ const ProfileCard = (props) => {
                                     }
                                 />
 
-                                <button 
-                                    className="btn btn-light d-inline-flex ml-1" 
+                                <button
+                                    className="btn btn-light d-inline-flex ml-1"
                                     onClick={() => setInEditMode(false)}
                                     disabled={pendingApiCall}>
                                     <span class="material-icons">close </span>
