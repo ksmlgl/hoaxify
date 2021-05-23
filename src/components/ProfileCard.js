@@ -18,7 +18,6 @@ const ProfileCard = (props) => {
         message = "We can edit";
     }
 
-
     return (
         <div className="card text-center">
             <div className="card-header">
