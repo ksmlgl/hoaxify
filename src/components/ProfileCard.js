@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom'
 // import { Authentication } from '../shared/AuthenticationContext'
 import { useSelector } from 'react-redux'
-import defaultPicture from '../assets/profile.png'
+import ProfileImageWithDefault from '../components/ProfileImageWithDefault'
 
 const ProfileCard = (props) => {
 
@@ -18,16 +18,16 @@ const ProfileCard = (props) => {
         message = "We can edit";
     }
 
-    let imageSource = defaultPicture;
-
-    if (image) {
-        imageSource = user.image;
-    }
 
     return (
         <div className="card text-center">
             <div className="card-header">
-                <img className="rounded-circle shadow" width="200" height="200" alt={`${username} profile`} src={imageSource} />
+                <ProfileImageWithDefault 
+                                    className="rounded-circle shadow" 
+                                    width="200"
+                                     height="200" 
+                                     alt={`${username} profile`} 
+                                     image={image} />
             </div>
             <div className="card-body">
                 <h3>{displayName}@{username}</h3>
