@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'
-// import { Authentication } from '../shared/AuthenticationContext'
 import { useSelector } from 'react-redux'
 import ProfileImageWithDefault from '../components/ProfileImageWithDefault'
 import { useTranslation } from 'react-i18next';
 import Input from '../components/input'
+import { updateUser } from '../api/apiCalls'
+import { useApiProgress } from '../shared/ApiProgress';
+import ButtonWithProgress from './ButtonWithProgress';
+
 const ProfileCard = (props) => {
 
     const [inEditMode, setInEditMode] = useState(false);
@@ -12,6 +15,13 @@ const ProfileCard = (props) => {
     const { username: loggedInUsername } = useSelector((store) => ({ username: store.username }))
     const routeParams = useParams();
 
+    const [user, setUser] = useState({});
+
+    useEffect(() => {
+        setUser(props.user)
+    }, [props.user])
+
+    const { username, displayName, image } = user;
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -23,12 +33,21 @@ const ProfileCard = (props) => {
     }, [inEditMode, displayName]);
 
 
-    const onClickSave = () => {
-        console.log(updatedDisplayName);
+    const onClickSave = async () => {
+        const body = {
+            displayName: updatedDisplayName
+        };
+        try {
+            const response = await updateUser(username, body);
+            setInEditMode(false);
+            setUser(response.data);
+        } catch (error) {
+
+        }
+
     }
 
-    const { user } = props;
-    const { username, displayName, image } = user;
+    const pendingApiCall = useApiProgress('put', '/api/1.0/users/' + username);
 
     const pathUserName = routeParams.username;
     let message = "We cannot edit";
@@ -63,11 +82,23 @@ const ProfileCard = (props) => {
 
                             <Input label={t("Change Display Name")} defaultValue={displayName} onChange={(event) => { setUpdatedDisplayName(event.target.value) }} />
                             <div>
-                                <button className="btn btn-primary d-inline-flex" onClick={onClickSave}>
-                                    <span className="material-icons">save</span>
-                                    {t('Save')}
-                                </button>
-                                <button className="btn btn-light d-inline-flex ml-1" onClick={() => setInEditMode(false)}>
+                                <ButtonWithProgress
+                                    className="btn btn-primary d-inline-flex"
+                                    onClick={onClickSave}
+                                    disabled={pendingApiCall}
+                                    pendingApiCall={pendingApiCall}
+                                    text={
+                                        <>
+                                            <span className="material-icons">save</span>
+                                            {t('Save')}
+                                        </>
+                                    }
+                                />
+
+                                <button 
+                                    className="btn btn-light d-inline-flex ml-1" 
+                                    onClick={() => setInEditMode(false)}
+                                    disabled={pendingApiCall}>
                                     <span class="material-icons">close </span>
                                     {t('Cancel')}
                                 </button>
@@ -78,7 +109,7 @@ const ProfileCard = (props) => {
                     )
                 }
             </div>
-        </div>
+        </div >
     );
 };
 
