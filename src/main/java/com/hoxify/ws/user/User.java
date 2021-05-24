@@ -41,7 +41,6 @@ public class User implements UserDetails {
 	@Lob
 	private String image;
 
-
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return AuthorityUtils.createAuthorityList("Role_user");
