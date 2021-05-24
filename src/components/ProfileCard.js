@@ -18,6 +18,7 @@ const ProfileCard = (props) => {
     const [user, setUser] = useState({});
 
     const [editable, setEditable] = useState(false);
+    const [newImage, setNewImage] = useState();
 
     const pathUserName = routeParams.username;
 
@@ -35,6 +36,7 @@ const ProfileCard = (props) => {
     useEffect(() => {
         if (!inEditMode) {
             setUpdatedDisplayName(undefined);
+            setNewImage(undefined);
         } else {
             setUpdatedDisplayName(displayName);
         }
@@ -55,6 +57,15 @@ const ProfileCard = (props) => {
 
     }
 
+    const onChangeFile = (event) => {
+        const file = event.target.files[0];
+        const fileReader = new FileReader();
+        fileReader.onloadend = () => {
+            setNewImage(fileReader.result);
+        }
+        fileReader.readAsDataURL(file);
+    }
+
     const pendingApiCall = useApiProgress('put', '/api/1.0/users/' + username);
 
 
@@ -67,7 +78,9 @@ const ProfileCard = (props) => {
                     width="200"
                     height="200"
                     alt={`${username} profile`}
-                    image={image} />
+                    image={image}
+                    tempImage={newImage}
+                />
             </div>
             <div className="card-body">
                 {!inEditMode &&
@@ -86,6 +99,7 @@ const ProfileCard = (props) => {
                         <div>
 
                             <Input label={t("Change Display Name")} defaultValue={displayName} onChange={(event) => { setUpdatedDisplayName(event.target.value) }} />
+                            <input type="file" onChange={onChangeFile} />
                             <div>
                                 <ButtonWithProgress
                                     className="btn btn-primary d-inline-flex"
@@ -104,7 +118,7 @@ const ProfileCard = (props) => {
                                     className="btn btn-light d-inline-flex ml-1"
                                     onClick={() => setInEditMode(false)}
                                     disabled={pendingApiCall}>
-                                    <span class="material-icons">close </span>
+                                    <span className="material-icons">close </span>
                                     {t('Cancel')}
                                 </button>
                             </div>
