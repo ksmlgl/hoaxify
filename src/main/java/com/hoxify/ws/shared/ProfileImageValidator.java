@@ -21,7 +21,7 @@ public class ProfileImageValidator implements ConstraintValidator<ProfileImage,S
 			return true;
 		}
 		String fileType = fileService.detectType(s);
-		if(fileType.equals("iamge/jpeg") || fileType.equals("iamge/jpg") || fileType.equals("iamge/png")){
+		if(fileType.equals("image/jpeg") || fileType.equals("image/jpg") || fileType.equals("image/png")){
 			return true;
 		}
 		return false;
