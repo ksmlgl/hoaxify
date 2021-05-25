@@ -24,22 +24,23 @@ import java.util.UUID;
 @Service
 public class FileService {
 
-	private static final Logger log = LoggerFactory.getLogger(FileService.class);
-	@Autowired
+
 	AppConfiguration appConfiguration;
+	Tika tika;
+
+	public FileService(AppConfiguration appConfiguration) {
+		this.appConfiguration = appConfiguration;
+		this.tika = new Tika();
+	}
+
 
 	public String writeBase64EncodedStringToFile(String image) throws IOException {
 
-		Tika tika = new Tika();
+		byte[] base64encoded = Base64.getDecoder().decode(image);
 
 		String fileName = generateRandomName();
 		File target = new File(appConfiguration.getUploadPath() +"/"+ fileName);
 		OutputStream outputStream = new FileOutputStream(target);
-		byte[] base64encoded = Base64.getDecoder().decode(image);
-
-		String fileType = tika.detect(base64encoded);
-
-		log.info(fileType);
 
 		outputStream.write(base64encoded);
 		outputStream.close();
@@ -59,5 +60,10 @@ public class FileService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public String detectType(String image) {
+		byte[] base64encoded = Base64.getDecoder().decode(image);
+		return tika.detect(base64encoded);
 	}
 }
