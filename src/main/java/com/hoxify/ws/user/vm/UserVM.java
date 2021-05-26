@@ -1,6 +1,6 @@
 package com.hoxify.ws.user.vm;
 
-import com.hoxify.ws.shared.ProfileImage;
+import com.hoxify.ws.shared.FileType;
 import com.hoxify.ws.user.User;
 import lombok.Data;
 
@@ -14,7 +14,7 @@ public class UserVM {
 	private String username;
 	private String displayName;
 
-	@ProfileImage
+	@FileType(types = {})
 	private String image;
 
 	public UserVM(User user){
