@@ -3,6 +3,7 @@ package com.hoxify.ws.hoax;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 /**
@@ -17,6 +18,8 @@ public class Hoax {
 	@GeneratedValue
 	private long id;
 
+	@Size(min=1, max =1000)
+	@Column(length = 1000)
 	private String content;
 
 	@Temporal(TemporalType.TIMESTAMP)

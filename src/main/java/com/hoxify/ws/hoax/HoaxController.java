@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 /**
  * @author KSM
  * @since 26.05.2021 23:06
@@ -19,7 +21,7 @@ public class HoaxController {
 	HoaxService hoaxService;
 
 	@PostMapping("/api/1.0/hoaxes")
-	private GenericResponse saveHoax(@RequestBody Hoax hoax){
+	private GenericResponse saveHoax(@Valid @RequestBody Hoax hoax){
 		hoaxService.save(hoax);
 
 		return new GenericResponse("hoax is saved");
