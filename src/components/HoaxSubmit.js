@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import ProfileImageWithDefault from '../components/ProfileImageWithDefault';
 import { postHoax } from '../api/apiCalls'
+import { useApiProgress } from '../shared/ApiProgress';
+import ButtonWithProgress from './ButtonWithProgress'
 
 const HoaxSubmit = () => {
     const { image } = useSelector((store) => ({ image: store.image }));
@@ -12,6 +14,7 @@ const HoaxSubmit = () => {
     const [focused, setFocused] = useState(false);
     const [hoax, setHoax] = useState('');
     const [errors, setErrors] = useState({});
+
 
     useEffect(() => {
         if (!focused) {
@@ -23,6 +26,8 @@ const HoaxSubmit = () => {
     useEffect(() => {
         setErrors({});
     }, [hoax]);
+
+    const pendingApiCall = useApiProgress('post', '/api/1.0/hoaxes');
 
     const hoaxify = async () => {
         const body = {
@@ -50,10 +55,14 @@ const HoaxSubmit = () => {
                 <textarea className={textAreaClass} rows={focused ? '3' : '1'} onFocus={() => setFocused(true)} onChange={(event) => { setHoax(event.target.value) }} value={hoax} />
                 <div className="invalid-feedback">{errors.content}</div>
                 {focused && (<div className="text-right mt-1">
-                    <button className="btn btn-primary" onClick={() => hoaxify()}>Hoaxify</button>
+                    <ButtonWithProgress className="btn btn-primary" onClick={hoaxify}
+                        text="Hoaxify"
+                        pendingApiCall={pendingApiCall}
+                        disabled={pendingApiCall}
+                    />
                     <button
                         className="btn btn-light d-inline-flex ml-1"
-                        onClick={() => setFocused(false)}>
+                        onClick={() => setFocused(false)} disabled={pendingApiCall}>
                         <span className="material-icons">close </span>
                         {t('Cancel')}
                     </button>
