@@ -1,5 +1,7 @@
 package com.hoxify.ws;
 
+import com.hoxify.ws.hoax.Hoax;
+import com.hoxify.ws.hoax.HoaxService;
 import com.hoxify.ws.user.User;
 import com.hoxify.ws.user.UserService;
 import org.springframework.boot.CommandLineRunner;
@@ -18,7 +20,7 @@ public class WsApplication {
 
 	@Bean
 	@Profile("dev")
-	CommandLineRunner createInitialUser(UserService userService) {
+	CommandLineRunner createInitialUser(UserService userService, HoaxService hoaxService) {
 		return (args) -> {
 			for(int i = 1; i <= 25; i++){
 				User user = new User();
@@ -26,6 +28,12 @@ public class WsApplication {
 				user.setDisplayName("display"+i);
 				user.setPassword("P4ssword");
 				userService.save(user);
+			}
+
+			for(int i=1; i<50; i++){
+				Hoax hoax = new Hoax();
+				hoax.setContent("hoax - "+i);
+				hoaxService.save(hoax);
 			}
 		};
 	}
