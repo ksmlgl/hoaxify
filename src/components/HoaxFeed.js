@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getHoaxes } from '../api/apiCalls'
 import { useTranslation } from 'react-i18next'
 import HoaxView from './HoaxView'
+import { useApiProgress } from '../shared/ApiProgress';
+import Spinner from '../components/Spinner'
 
 
 const HoaxFeed = () => {
@@ -10,8 +12,8 @@ const HoaxFeed = () => {
     const { t } = useTranslation();
     const [hoaxPage, setHoaxPage] = useState({ content: [], last: true, number: 0 });
 
+    const pendingApiCall = useApiProgress('get', '/api/1.0/hoaxes');
     useEffect(() => {
-
         loadHoaxes();
     }, []);
 
@@ -31,7 +33,7 @@ const HoaxFeed = () => {
     const { content, last, number } = hoaxPage;
 
     if (content.length === 0) {
-        return <div className="alert alert-secondary text-center">{t('There are no hoaxes')}</div>
+        return <div className="alert alert-secondary text-center">{pendingApiCall ? <Spinner /> : t('There are no hoaxes')}</div>
     }
 
     return (
@@ -40,7 +42,9 @@ const HoaxFeed = () => {
                 return <HoaxView key={hoax.id} hoax={hoax} />
             })
             }
-            {!last && <div className="alert alert-secondary text-center mt-1" style={{cursor:'pointer'}} onClick={() => loadHoaxes(number + 1)} >{t('Load old hoaxes')}</div>}
+            {!last && <div
+                className="alert alert-secondary text-center mt-1" style={{ cursor: pendingApiCall ? 'not-allowed':'pointer' }} onClick={pendingApiCall ? () => {} : () => loadHoaxes(number + 1)} >
+                {pendingApiCall ? <Spinner /> : t('Load old hoaxes')}</div>}
         </div>
     );
 };
