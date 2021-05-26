@@ -2,10 +2,9 @@ package com.hoxify.ws.hoax;
 
 import com.hoxify.ws.shared.GenericResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -14,17 +13,23 @@ import javax.validation.Valid;
  * @since 26.05.2021 23:06
  */
 @RestController
+@RequestMapping("/api/1.0")
 public class HoaxController {
 
 
 	@Autowired
 	HoaxService hoaxService;
 
-	@PostMapping("/api/1.0/hoaxes")
+	@PostMapping("/hoaxes")
 	private GenericResponse saveHoax(@Valid @RequestBody Hoax hoax){
 		hoaxService.save(hoax);
 
 		return new GenericResponse("hoax is saved");
+	}
+
+	@GetMapping("/hoaxes")
+	private Page<Hoax> getHoaxes(Pageable page){
+		return hoaxService.getHoaxes(page);
 	}
 
 }
