@@ -23,7 +23,7 @@ const HoaxView = (props) => {
                         </h6>
                         <span> - </span>
                         <span>
-                            {formatted}
+                            {formatted} 
                         </span>
                     </Link>
                 </div>
