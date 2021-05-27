@@ -1,6 +1,8 @@
 package com.hoxify.ws.hoax;
 
+import com.hoxify.ws.shared.CurrentUser;
 import com.hoxify.ws.shared.GenericResponse;
+import com.hoxify.ws.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,8 +25,8 @@ public class HoaxController {
 	HoaxService hoaxService;
 
 	@PostMapping("/hoaxes")
-	private GenericResponse saveHoax(@Valid @RequestBody Hoax hoax){
-		hoaxService.save(hoax);
+	private GenericResponse saveHoax(@Valid @RequestBody Hoax hoax, @CurrentUser User user){
+		hoaxService.save(hoax, user);
 
 		return new GenericResponse("hoax is saved");
 	}

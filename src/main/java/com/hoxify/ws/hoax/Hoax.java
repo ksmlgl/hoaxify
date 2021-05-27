@@ -1,5 +1,6 @@
 package com.hoxify.ws.hoax;
 
+import com.hoxify.ws.user.User;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -24,4 +25,6 @@ public class Hoax {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date timestamp;
+
+	private User user;
 }
