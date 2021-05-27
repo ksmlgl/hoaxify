@@ -1,5 +1,6 @@
 package com.hoxify.ws.hoax;
 
+import com.hoxify.ws.hoax.vm.HoaxVM;
 import com.hoxify.ws.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,5 +29,9 @@ public class HoaxService {
 
 	public Page<Hoax> getHoaxes(Pageable page) {
 		return hoaxRepository.findAll(page);
+	}
+
+	public Page<Hoax> getUserHoaxes(User user, Pageable page) {
+		return hoaxRepository.findByUser(user, page);
 	}
 }
