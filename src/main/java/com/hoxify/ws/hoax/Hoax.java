@@ -16,7 +16,7 @@ import java.util.Date;
 public class Hoax {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
 	@Size(min=1, max =1000)
