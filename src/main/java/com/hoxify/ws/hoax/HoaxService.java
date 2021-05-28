@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * @author KSM
@@ -33,5 +34,9 @@ public class HoaxService {
 
 	public Page<Hoax> getUserHoaxes(User user, Pageable page) {
 		return hoaxRepository.findByUser(user, page);
+	}
+
+	public Page<Hoax> getOldHoaxes(Long id, Pageable page) {
+		return hoaxRepository.findByIdLessThan(id, page);
 	}
 }
