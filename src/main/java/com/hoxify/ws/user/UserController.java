@@ -19,6 +19,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.xml.ws.Response;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -69,9 +72,16 @@ public class UserController {
 	}
 
 	@GetMapping(value = "/users/{username}/hoaxes/{id}")
-	Page<HoaxVM> getUserHoaxes(@PathVariable String username, @PathVariable long id,@PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable page){
+	ResponseEntity<?> getUserHoaxesRelative(@PathVariable String username, @PathVariable long id, @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable page,
+								   @RequestParam(name="count", required = false, defaultValue = "false") boolean count){
 		User user = userService.getByUsername(username);
-		return hoaxService.getOldHoaxesOfUser(user, id, page).map(HoaxVM::new);
+		if(count){
+			long newHoaxCount = hoaxService.getNewHoaxesCountOfUser(id, user);
+			Map<String, Long> response = new HashMap<>();
+			response.put("count", newHoaxCount);
+			return ResponseEntity.ok(response);
+		}
+		return ResponseEntity.ok(hoaxService.getOldHoaxesOfUser(user, id, page).map(HoaxVM::new));
 	}
 
 }

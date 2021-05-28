@@ -48,4 +48,8 @@ public class HoaxService {
 		return hoaxRepository.countByIdGreaterThan(id);
 
 	}
+
+	public long getNewHoaxesCountOfUser(long id, User user) {
+		return hoaxRepository.countByIdGreaterThanAndUser(id, user);
+	}
 }
