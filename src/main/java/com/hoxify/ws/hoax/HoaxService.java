@@ -58,4 +58,8 @@ public class HoaxService {
 	public List<Hoax> getNewHoaxes(Long id, Sort sort) {
 		return hoaxRepository.findByIdGreaterThan(id, sort);
 	}
+
+	public List<Hoax> getNewHoaxesOfUser(long id, User user, Sort sort) {
+		return hoaxRepository.findByIdGreaterThanAndUser(id,user,sort);
+	}
 }

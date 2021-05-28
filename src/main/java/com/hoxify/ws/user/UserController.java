@@ -1,6 +1,7 @@
 package com.hoxify.ws.user;
 
 import com.hoxify.ws.error.ApiError;
+import com.hoxify.ws.hoax.Hoax;
 import com.hoxify.ws.hoax.HoaxService;
 import com.hoxify.ws.hoax.vm.HoaxVM;
 import com.hoxify.ws.shared.CurrentUser;
@@ -21,7 +22,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.xml.ws.Response;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -41,45 +44,50 @@ public class UserController {
 
 	@PostMapping(value = "/users", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	public GenericResponse createUser(@Valid @RequestBody User user){
+	public GenericResponse createUser(@Valid @RequestBody User user) {
 		userService.save(user);
 		return new GenericResponse("User created");
 
 	}
 
-	@GetMapping(value="/users")
-	Page<UserVM> getUsers(Pageable page, @CurrentUser User user){
+	@GetMapping(value = "/users")
+	Page<UserVM> getUsers(Pageable page, @CurrentUser User user) {
 		return userService.getUsers(page, user).map(UserVM::new);
 	}
 
-	@GetMapping(value="/users/{username}")
-	UserVM getUser(@PathVariable String username){
+	@GetMapping(value = "/users/{username}")
+	UserVM getUser(@PathVariable String username) {
 		User user = userService.getByUsername(username);
 		return new UserVM(user);
 	}
 
 	@PutMapping(value = "/users/{username}")
 	@PreAuthorize("#username == principal.username")
-	UserVM updateUser(@Valid @RequestBody UserUpdateVM updatedUser, @PathVariable String username){
+	UserVM updateUser(@Valid @RequestBody UserUpdateVM updatedUser, @PathVariable String username) {
 		User user = userService.updateUser(username, updatedUser);
 		return new UserVM(user);
 	}
 
 	@GetMapping(value = "/users/{username}/hoaxes")
-	Page<HoaxVM> getUserHoaxes(@PathVariable String username, @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable page){
+	Page<HoaxVM> getUserHoaxes(@PathVariable String username, @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable page) {
 		User user = userService.getByUsername(username);
 		return hoaxService.getUserHoaxes(user, page).map(HoaxVM::new);
 	}
 
 	@GetMapping(value = "/users/{username}/hoaxes/{id}")
 	ResponseEntity<?> getUserHoaxesRelative(@PathVariable String username, @PathVariable long id, @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable page,
-								   @RequestParam(name="count", required = false, defaultValue = "false") boolean count){
+											@RequestParam(name = "count", required = false, defaultValue = "false") boolean count,
+											@RequestParam(name = "direction", defaultValue = "before") String direction) {
 		User user = userService.getByUsername(username);
-		if(count){
+		if (count) {
 			long newHoaxCount = hoaxService.getNewHoaxesCountOfUser(id, user);
 			Map<String, Long> response = new HashMap<>();
 			response.put("count", newHoaxCount);
 			return ResponseEntity.ok(response);
+		}
+		if(direction.equals("after")){
+			List<Hoax> newHoaxes = hoaxService.getNewHoaxesOfUser(id,user, page.getSort());
+			return ResponseEntity.ok(newHoaxes.stream().map(HoaxVM::new).collect(Collectors.toList()));
 		}
 		return ResponseEntity.ok(hoaxService.getOldHoaxesOfUser(user, id, page).map(HoaxVM::new));
 	}
