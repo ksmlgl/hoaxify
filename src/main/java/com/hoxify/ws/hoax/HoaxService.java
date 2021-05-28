@@ -5,8 +5,13 @@ import com.hoxify.ws.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +44,9 @@ public class HoaxService {
 	}
 
 	public Page<Hoax> getOldHoaxes(Long id, Pageable page) {
-		return hoaxRepository.findByIdLessThan(id, page);
+
+		Specification<Hoax> spec = idLessThan(id);
+		return hoaxRepository.findAll(spec, page);
 	}
 
 	public Page<Hoax> getOldHoaxesOfUser(User user, long id, Pageable page) {
@@ -62,4 +69,9 @@ public class HoaxService {
 	public List<Hoax> getNewHoaxesOfUser(long id, User user, Sort sort) {
 		return hoaxRepository.findByIdGreaterThanAndUser(id,user,sort);
 	}
+
+	private Specification<Hoax> idLessThan(long id){
+		return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.lessThan(root.get("id"), id);
+	}
+
 }
