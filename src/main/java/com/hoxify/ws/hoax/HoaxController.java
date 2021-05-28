@@ -9,9 +9,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author KSM
@@ -38,8 +41,15 @@ public class HoaxController {
 	}
 
 	@GetMapping("/hoaxes/{id}")
-	private Page<HoaxVM> getHoaxesRelative(@PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable page, @PathVariable Long id){
-		return hoaxService.getOldHoaxes(id, page).map(HoaxVM::new);
+	private ResponseEntity<?> getHoaxesRelative(@PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable page, @PathVariable Long id,
+												@RequestParam(name="count", required = false, defaultValue = "false") boolean count){
+		if(count){
+			long newHoaxCount = hoaxService.getNewHoaxesCount(id);
+			Map<String, Long> response = new HashMap<>();
+			response.put("count", newHoaxCount);
+			return ResponseEntity.ok(response);
+		}
+		return ResponseEntity.ok(hoaxService.getOldHoaxes(id, page).map(HoaxVM::new));
 	}
 
 }

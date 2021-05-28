@@ -18,7 +18,7 @@ public class HoaxService {
 
 	HoaxRepository hoaxRepository;
 
-	private HoaxService(HoaxRepository hoaxRepository){
+	private HoaxService(HoaxRepository hoaxRepository) {
 		this.hoaxRepository = hoaxRepository;
 	}
 
@@ -41,6 +41,11 @@ public class HoaxService {
 	}
 
 	public Page<Hoax> getOldHoaxesOfUser(User user, long id, Pageable page) {
-		return hoaxRepository.findByIdLessThanAndUser(id,user,page);
+		return hoaxRepository.findByIdLessThanAndUser(id, user, page);
+	}
+
+	public long getNewHoaxesCount(Long id) {
+		return hoaxRepository.countByIdGreaterThan(id);
+
 	}
 }
