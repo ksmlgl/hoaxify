@@ -3,7 +3,10 @@ package com.hoxify.ws.hoax;
 import com.hoxify.ws.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 /**
  * @author KSM
@@ -20,4 +23,6 @@ public interface HoaxRepository extends JpaRepository<Hoax,Long> {
 	long countByIdGreaterThan(long id);
 
 	long countByIdGreaterThanAndUser(long id, User user);
+
+	List<Hoax> findByIdGreaterThan(long id, Sort sort);
 }

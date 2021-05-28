@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author KSM
@@ -42,12 +44,17 @@ public class HoaxController {
 
 	@GetMapping("/hoaxes/{id}")
 	private ResponseEntity<?> getHoaxesRelative(@PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable page, @PathVariable Long id,
-												@RequestParam(name="count", required = false, defaultValue = "false") boolean count){
+												@RequestParam(name="count", required = false, defaultValue = "false") boolean count,
+												@RequestParam(name="direction", defaultValue = "before") String direction){
 		if(count){
 			long newHoaxCount = hoaxService.getNewHoaxesCount(id);
 			Map<String, Long> response = new HashMap<>();
 			response.put("count", newHoaxCount);
 			return ResponseEntity.ok(response);
+		}
+		if(direction.equals("after")){
+			List<Hoax> newHoaxes = hoaxService.getNewHoaxes(id, page.getSort());
+			return ResponseEntity.ok(newHoaxes.stream().map(HoaxVM::new).collect(Collectors.toList()));
 		}
 		return ResponseEntity.ok(hoaxService.getOldHoaxes(id, page).map(HoaxVM::new));
 	}
