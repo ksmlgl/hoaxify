@@ -13,6 +13,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -26,9 +27,12 @@ public class FileService {
 	AppConfiguration appConfiguration;
 	Tika tika;
 
-	public FileService(AppConfiguration appConfiguration) {
+	FileAttachmentRepository fileAttachmentRepository;
+
+	public FileService(AppConfiguration appConfiguration, FileAttachmentRepository fileAttachmentRepository) {
 		this.appConfiguration = appConfiguration;
 		this.tika = new Tika();
+		this.fileAttachmentRepository = fileAttachmentRepository;
 	}
 
 
@@ -65,7 +69,7 @@ public class FileService {
 		return tika.detect(base64encoded);
 	}
 
-	public String saveHoaxAttachment(MultipartFile multipartFile){
+	public FileAttachment saveHoaxAttachment(MultipartFile multipartFile){
 
 		String fileName = generateRandomName();
 		File target = new File(appConfiguration.getUploadPath() +"/"+ fileName);
@@ -77,7 +81,10 @@ public class FileService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return fileName;
+		FileAttachment fileAttachment = new FileAttachment();
+		fileAttachment.setName(fileName);
+		fileAttachment.setDate(new Date());
+		return fileAttachmentRepository.save(fileAttachment);
 
 	}
 }
