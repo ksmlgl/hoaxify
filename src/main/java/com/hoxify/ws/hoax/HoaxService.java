@@ -1,5 +1,6 @@
 package com.hoxify.ws.hoax;
 
+import com.hoxify.ws.error.AuthorizationException;
 import com.hoxify.ws.file.FileAttachment;
 import com.hoxify.ws.file.FileAttachmentRepository;
 import com.hoxify.ws.hoax.vm.HoaxSubmitVM;
@@ -88,7 +89,16 @@ public class HoaxService {
 		return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.lessThan(root.get("id"), id);
 	}
 
-	public void delete(long id) {
+	public void delete(long id, User loggedInUser) {
+		Optional<Hoax> optionalHoax = hoaxRepository.findById(id);
+		if(!optionalHoax.isPresent()){
+			throw new AuthorizationException();
+		}
+		Hoax hoax = optionalHoax.get();
+		if(hoax.getUser().getId() != loggedInUser.getId()){
+			throw new AuthorizationException();
+		}
+
 		hoaxRepository.deleteById(id);
 	}
 }

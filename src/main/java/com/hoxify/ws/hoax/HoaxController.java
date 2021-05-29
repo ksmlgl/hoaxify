@@ -62,8 +62,8 @@ public class HoaxController {
 	}
 
 	@DeleteMapping("/hoaxes/{id}")
-	private GenericResponse deleteHoax(@PathVariable long id){
-		hoaxService.delete(id);
+	private GenericResponse deleteHoax(@PathVariable long id, @CurrentUser User loggedInUser){
+		hoaxService.delete(id, loggedInUser);
 		return new GenericResponse("Hoax removed");
 	}
 
