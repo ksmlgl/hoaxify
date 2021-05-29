@@ -3,6 +3,7 @@ package com.hoxify.ws.file;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +22,7 @@ public class FileController {
 	FileService fileService;
 
 	@PostMapping("/api/1.0/hoax-attachments")
-	ResponseEntity<?> saveHoaxAttachment(MultipartFile multipartFile){
+	ResponseEntity<?> saveHoaxAttachment(@RequestParam(name="image") MultipartFile multipartFile){
 		String fileName = fileService.saveHoaxAttachment(multipartFile);
 		Map<String, String> responseBody = Collections.singletonMap("name", fileName);
 		return ResponseEntity.ok(responseBody);
