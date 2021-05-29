@@ -6,6 +6,7 @@ import { postHoax, postHoaxAttachment } from '../api/apiCalls'
 import { useApiProgress } from '../shared/ApiProgress';
 import ButtonWithProgress from './ButtonWithProgress'
 import Input from '../components/input'
+import AutoUploadImage from './AutoUploadImage';
 
 const HoaxSubmit = () => {
     const { image } = useSelector((store) => ({ image: store.image }));
@@ -30,7 +31,8 @@ const HoaxSubmit = () => {
         setErrors({});
     }, [hoax]);
 
-    const pendingApiCall = useApiProgress('post', '/api/1.0/hoaxes');
+    const pendingApiCall = useApiProgress('post', '/api/1.0/hoaxes', true);
+    const pendingFileUpload = useApiProgress('post', '/api/1.0/hoax-attachments', true);
 
     const hoaxify = async () => {
         const body = {
@@ -78,17 +80,17 @@ const HoaxSubmit = () => {
                 <div className="invalid-feedback">{errors.content}</div>
                 {focused && (
                     <>
-                        <Input type="file" onChange={onChangeFile} />
-                        {newImage && <img src={newImage} className="img-thumbnail" alt="hoax-attachment" />}
+                        {!newImage && <Input type="file" onChange={onChangeFile} />}
+                        {newImage && <AutoUploadImage image={newImage} uploading={pendingFileUpload} />}
                         <div className="text-right mt-1">
                             <ButtonWithProgress className="btn btn-primary" onClick={hoaxify}
                                 text="Hoaxify"
                                 pendingApiCall={pendingApiCall}
-                                disabled={pendingApiCall}
+                                disabled={pendingApiCall || pendingFileUpload}
                             />
                             <button
                                 className="btn btn-light d-inline-flex ml-1"
-                                onClick={() => setFocused(false)} disabled={pendingApiCall}>
+                                onClick={() => setFocused(false)} disabled={pendingApiCall || pendingFileUpload}>
                                 <span className="material-icons">close </span>
                                 {t('Cancel')}
                             </button>
