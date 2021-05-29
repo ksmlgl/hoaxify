@@ -5,6 +5,7 @@ import ProfileImageWithDefault from '../components/ProfileImageWithDefault';
 import { postHoax } from '../api/apiCalls'
 import { useApiProgress } from '../shared/ApiProgress';
 import ButtonWithProgress from './ButtonWithProgress'
+import Input from '../components/input'
 
 const HoaxSubmit = () => {
     const { image } = useSelector((store) => ({ image: store.image }));
@@ -14,12 +15,14 @@ const HoaxSubmit = () => {
     const [focused, setFocused] = useState(false);
     const [hoax, setHoax] = useState('');
     const [errors, setErrors] = useState({});
+    const [newImage, setNewImage] = useState();
 
 
     useEffect(() => {
         if (!focused) {
             setHoax('');
             setErrors({});
+            setNewImage();
         }
     }, [focused]);
 
@@ -41,6 +44,17 @@ const HoaxSubmit = () => {
             setErrors(error.response.data.validationErrors);
         }
 
+    };
+    const onChangeFile = (event) => {
+        if (event.target.files.length < 1) {
+            return;
+        }
+        const file = event.target.files[0];
+        const fileReader = new FileReader();
+        fileReader.onloadend = () => {
+            setNewImage(fileReader.result);
+        }
+        fileReader.readAsDataURL(file);
     }
 
     let textAreaClass = 'form-control';
@@ -54,7 +68,11 @@ const HoaxSubmit = () => {
             <div className="flex-fill">
                 <textarea className={textAreaClass} rows={focused ? '3' : '1'} onFocus={() => setFocused(true)} onChange={(event) => { setHoax(event.target.value) }} value={hoax} />
                 <div className="invalid-feedback">{errors.content}</div>
-                {focused && (<div className="text-right mt-1">
+                {focused && (
+                <>
+                <Input type="file" onChange={onChangeFile}/>
+                {newImage && <img src={newImage} className="img-thumbnail" alt="hoax-attachment" />}
+                <div className="text-right mt-1">
                     <ButtonWithProgress className="btn btn-primary" onClick={hoaxify}
                         text="Hoaxify"
                         pendingApiCall={pendingApiCall}
@@ -66,7 +84,9 @@ const HoaxSubmit = () => {
                         <span className="material-icons">close </span>
                         {t('Cancel')}
                     </button>
-                </div>)}
+                </div>
+                </>
+                )}
             </div>
         </div>
     );
