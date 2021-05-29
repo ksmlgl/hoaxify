@@ -3,15 +3,18 @@ import ProfileImageWithDefault from './ProfileImageWithDefault';
 import { Link } from 'react-router-dom';
 import { format } from 'timeago.js'
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 
 const HoaxView = (props) => {
+    const loggedInUser = useSelector(store => store.username);
     const { hoax } = props;
     const { user, content, timestamp, fileAttachment } = hoax;
     const { username, displayName, image } = user;
-    const {i18n } = useTranslation();
+    const { i18n } = useTranslation();
     const formatted = format(timestamp, i18n.language);
-    
+
+    const ownedByLoggedInUser = loggedInUser === username;
     return (
         <div className="card p-1">
             <div className="d-flex m-1">
@@ -23,10 +26,16 @@ const HoaxView = (props) => {
                         </h6>
                         <span> - </span>
                         <span>
-                            {formatted} 
+                            {formatted}
                         </span>
                     </Link>
                 </div>
+
+                {ownedByLoggedInUser && (<button className="btn btn-delete-link btn-sm">
+                    <span className="material-icons">
+                        delete_outline
+                    </span>
+                </button>)}
             </div>
             <div className="pl-5">
                 {content}
@@ -34,7 +43,7 @@ const HoaxView = (props) => {
             {fileAttachment && (
                 <div className="pl-5">
                     {fileAttachment.fileType.startsWith('image') && (
-                    <img className = "img-fluid" src={'images/attachments/'+fileAttachment.name} alt={content} />
+                        <img className="img-fluid" src={'images/attachments/' + fileAttachment.name} alt={content} />
                     )}
                     {!fileAttachment.fileType.startsWith('image') && (
                         <strong>Hoax has unknown attachment</strong>
