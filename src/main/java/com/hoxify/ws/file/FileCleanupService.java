@@ -1,7 +1,5 @@
 package com.hoxify.ws.file;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,7 +28,7 @@ public class FileCleanupService {
 		Date twentyFourHoursAgo = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
 		List<FileAttachment> fileToBeDeleted = fileAttachmentRepository.findByDateBeforeAndHoaxIsNull(twentyFourHoursAgo);
 		for(FileAttachment fileAttachment: fileToBeDeleted){
-			fileService.deleteFile(fileAttachment.getName());
+			fileService.deleteAttachmentFile(fileAttachment.getName());
 			fileAttachmentRepository.deleteById(fileAttachment.getId());
 		}
 	}

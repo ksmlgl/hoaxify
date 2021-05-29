@@ -15,4 +15,16 @@ import org.springframework.context.annotation.Configuration;
 public class AppConfiguration {
 
 	private String uploadPath;
+
+	private String profileStorage = "profile";
+
+	private String attachmentStorage = "attachments";
+
+	public String getProfileStoragePath() {
+		return uploadPath + "/" + profileStorage;
+	}
+
+	public String getAttachmenttoragePath() {
+		return uploadPath + "/" + attachmentStorage;
+	}
 }

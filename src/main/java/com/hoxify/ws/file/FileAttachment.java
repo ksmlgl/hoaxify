@@ -26,6 +26,8 @@ public class FileAttachment {
 	@OneToOne
 	private Hoax hoax;
 
+	private String fileType;
+
 
 
 }

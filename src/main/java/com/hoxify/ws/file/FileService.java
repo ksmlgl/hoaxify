@@ -41,7 +41,7 @@ public class FileService {
 		byte[] base64encoded = Base64.getDecoder().decode(image);
 
 		String fileName = generateRandomName();
-		File target = new File(appConfiguration.getUploadPath() +"/"+ fileName);
+		File target = new File(appConfiguration.getProfileStoragePath() + "/" + fileName);
 		OutputStream outputStream = new FileOutputStream(target);
 
 		outputStream.write(base64encoded);
@@ -53,30 +53,32 @@ public class FileService {
 		return UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
-	public void deleteFile(String oldImageName) {
-		if(oldImageName == null){
+	public void deleteProfileImage(String oldImageName) {
+		if (oldImageName == null) {
 			return;
 		}
-		try {
-			Files.deleteIfExists(Paths.get(appConfiguration.getUploadPath(), oldImageName));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		deleteFile(appConfiguration.getProfileStoragePath(), oldImageName);
 	}
 
-	public String detectType(String image) {
-		byte[] base64encoded = Base64.getDecoder().decode(image);
-		return tika.detect(base64encoded);
+	public String detectType(String base64) {
+		byte [] base64Encoded = Base64.getDecoder().decode(base64);
+		return tika.detect(base64Encoded);
+	}
+	public String detectType(byte [] arr) {
+		return tika.detect(arr);
 	}
 
-	public FileAttachment saveHoaxAttachment(MultipartFile multipartFile){
+	public FileAttachment saveHoaxAttachment(MultipartFile multipartFile) {
 
 		String fileName = generateRandomName();
-		File target = new File(appConfiguration.getUploadPath() +"/"+ fileName);
+		File target = new File(appConfiguration.getAttachmenttoragePath() + "/" + fileName);
 		OutputStream outputStream = null;
+		String fileType = "";
 		try {
+			byte [] arr = multipartFile.getBytes();
 			outputStream = new FileOutputStream(target);
-			outputStream.write(multipartFile.getBytes());
+			outputStream.write(arr);
+			fileType = detectType(arr);
 			outputStream.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -84,7 +86,24 @@ public class FileService {
 		FileAttachment fileAttachment = new FileAttachment();
 		fileAttachment.setName(fileName);
 		fileAttachment.setDate(new Date());
+		fileAttachment.setFileType(fileType);
 		return fileAttachmentRepository.save(fileAttachment);
 
+	}
+
+	public void deleteAttachmentFile(String name) {
+		if (name == null) {
+			return;
+		}
+		deleteFile(appConfiguration.getAttachmenttoragePath(), name);
+
+	}
+
+	private void deleteFile(String path, String name) {
+		try {
+			Files.deleteIfExists(Paths.get(path, name));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
