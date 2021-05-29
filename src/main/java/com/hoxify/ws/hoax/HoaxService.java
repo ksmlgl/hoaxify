@@ -42,7 +42,7 @@ public class HoaxService {
 		hoax.setUser(user);
 		hoaxRepository.save(hoax);
 		Optional<FileAttachment> optionalFileAttachment = fileAttachmentRepository.findById(hoaxSubmitVM.getAttachmentId());
-		if(optionalFileAttachment.isPresent()){
+		if (optionalFileAttachment.isPresent()) {
 			FileAttachment fileAttachment = optionalFileAttachment.get();
 			fileAttachment.setHoax(hoax);
 			fileAttachmentRepository.save(fileAttachment);
@@ -81,11 +81,14 @@ public class HoaxService {
 	}
 
 	public List<Hoax> getNewHoaxesOfUser(long id, User user, Sort sort) {
-		return hoaxRepository.findByIdGreaterThanAndUser(id,user,sort);
+		return hoaxRepository.findByIdGreaterThanAndUser(id, user, sort);
 	}
 
-	private Specification<Hoax> idLessThan(long id){
+	private Specification<Hoax> idLessThan(long id) {
 		return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.lessThan(root.get("id"), id);
 	}
 
+	public void delete(long id) {
+		hoaxRepository.deleteById(id);
+	}
 }

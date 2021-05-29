@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.CodeSigner;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,12 @@ public class HoaxController {
 			return ResponseEntity.ok(newHoaxes.stream().map(HoaxVM::new).collect(Collectors.toList()));
 		}
 		return ResponseEntity.ok(hoaxService.getOldHoaxes(id, page).map(HoaxVM::new));
+	}
+
+	@DeleteMapping("/hoaxes/id")
+	private GenericResponse deleteHoax(@PathVariable long id){
+		hoaxService.delete(id);
+		return new GenericResponse("Hoax removed");
 	}
 
 }
