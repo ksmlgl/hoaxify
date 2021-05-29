@@ -28,4 +28,6 @@ public class Hoax {
 
 	@ManyToOne
 	private User user;
+
+
 }

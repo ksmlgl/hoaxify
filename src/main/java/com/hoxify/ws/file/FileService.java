@@ -7,11 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
@@ -65,5 +63,21 @@ public class FileService {
 	public String detectType(String image) {
 		byte[] base64encoded = Base64.getDecoder().decode(image);
 		return tika.detect(base64encoded);
+	}
+
+	public String saveHoaxAttachment(MultipartFile multipartFile){
+
+		String fileName = generateRandomName();
+		File target = new File(appConfiguration.getUploadPath() +"/"+ fileName);
+		OutputStream outputStream = null;
+		try {
+			outputStream = new FileOutputStream(target);
+			outputStream.write(multipartFile.getBytes());
+			outputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return fileName;
+
 	}
 }
