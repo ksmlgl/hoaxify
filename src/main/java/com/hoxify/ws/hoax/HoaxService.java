@@ -3,6 +3,7 @@ package com.hoxify.ws.hoax;
 import com.hoxify.ws.error.AuthorizationException;
 import com.hoxify.ws.file.FileAttachment;
 import com.hoxify.ws.file.FileAttachmentRepository;
+import com.hoxify.ws.file.FileService;
 import com.hoxify.ws.hoax.vm.HoaxSubmitVM;
 import com.hoxify.ws.hoax.vm.HoaxVM;
 import com.hoxify.ws.user.User;
@@ -31,9 +32,12 @@ public class HoaxService {
 
 	FileAttachmentRepository fileAttachmentRepository;
 
-	private HoaxService(HoaxRepository hoaxRepository, FileAttachmentRepository fileAttachmentRepository) {
+	FileService fileService;
+
+	private HoaxService(HoaxRepository hoaxRepository, FileAttachmentRepository fileAttachmentRepository,FileService fileService) {
 		this.hoaxRepository = hoaxRepository;
 		this.fileAttachmentRepository = fileAttachmentRepository;
+		this.fileService = fileService;
 	}
 
 	public void save(HoaxSubmitVM hoaxSubmitVM, User user) {
@@ -98,7 +102,10 @@ public class HoaxService {
 		if(hoax.getUser().getId() != loggedInUser.getId()){
 			throw new AuthorizationException();
 		}
-
+		if(hoax.getFileAttachment() != null){
+			String fileName = hoax.getFileAttachment().getName();
+			fileService.deleteAttachmentFile(fileName);
+		}
 		hoaxRepository.deleteById(id);
 	}
 }
