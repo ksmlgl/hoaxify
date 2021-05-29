@@ -1,5 +1,6 @@
 package com.hoxify.ws.hoax;
 
+import com.hoxify.ws.file.FileAttachment;
 import com.hoxify.ws.user.User;
 import lombok.Data;
 
@@ -27,6 +28,9 @@ public class Hoax {
 
 	@ManyToOne
 	private User user;
+
+	@OneToOne(mappedBy = "hoax")
+	private FileAttachment fileAttachment;
 
 
 }
