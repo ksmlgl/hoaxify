@@ -61,7 +61,7 @@ public class HoaxController {
 		return ResponseEntity.ok(hoaxService.getOldHoaxes(id, page).map(HoaxVM::new));
 	}
 
-	@DeleteMapping("/hoaxes/id")
+	@DeleteMapping("/hoaxes/{id}")
 	private GenericResponse deleteHoax(@PathVariable long id){
 		hoaxService.delete(id);
 		return new GenericResponse("Hoax removed");
