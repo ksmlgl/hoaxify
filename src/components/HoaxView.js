@@ -33,7 +33,13 @@ const HoaxView = (props) => {
             </div>
             {fileAttachment && (
                 <div className="pl-5">
-                    <img className = "img-fluid" src={'images/'+fileAttachment.name} alt={content} />
+                    {fileAttachment.fileType.startsWith('image') && (
+                    <img className = "img-fluid" src={'images/attachments/'+fileAttachment.name} alt={content} />
+                    )}
+                    {!fileAttachment.fileType.startsWith('image') && (
+                        <strong>Hoax has unknown attachment</strong>
+
+                    )}
                 </div>
             )}
 
