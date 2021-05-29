@@ -27,7 +27,7 @@ const HoaxFeed = () => {
     const oldHoaxPath = username ? `/api/1.0/users/${username}/hoaxes/${lastHoaxId}` : '/api/1.0/hoaxes/' + lastHoaxId;
     const loadOldHoaxesProgress = useApiProgress('get', oldHoaxPath, true);
 
-    const newHoaxPath = username ? `/api/1.0/users/${username}/hoaxes/${firstHoaxId}?direction=after?`: `/api/1.0/hoaxes/${firstHoaxId}?direction=after`;
+    const newHoaxPath = username ? `/api/1.0/users/${username}/hoaxes/${firstHoaxId}?direction=after?` : `/api/1.0/hoaxes/${firstHoaxId}?direction=after`;
     const loadNewHoaxesProgress = useApiProgress('get', newHoaxPath, true);
 
 
@@ -38,7 +38,7 @@ const HoaxFeed = () => {
         }
         let looper = setInterval(getCount, 5000);
 
-        return function cleanUp(){
+        return function cleanUp() {
             clearInterval(looper);
         }
     }, [firstHoaxId, username]);
@@ -79,7 +79,15 @@ const HoaxFeed = () => {
         const response = await getNewHoaxes(firstHoaxId, username);
         setHoaxPage(previousHoaxPage => ({
             ...previousHoaxPage,
-            content: [ ...response.data, ...previousHoaxPage.content]
+            content: [...response.data, ...previousHoaxPage.content]
+        }));
+    }
+
+
+    const onDeleteHoaxSuccess = id => {
+        setHoaxPage(previousHoaxPage => ({
+            ...previousHoaxPage,
+            content: previousHoaxPage.content.filter((hoax) => hoax.id!==id)
         }));
     }
 
@@ -91,16 +99,16 @@ const HoaxFeed = () => {
 
     return (
         <div>
-            {newHoaxCount>0 &&  <div 
-                    className="alert alert-secondary text-center"
-                    style={{ cursor: loadNewHoaxesProgress ? 'not-allowed' : 'pointer' }} onClick={loadNewHoaxesProgress ? () => { } : loadNewHoaxes}
-                    >{loadNewHoaxesProgress ? <Spinner /> : t('There are new hoaxes')}</div>}
+            {newHoaxCount > 0 && <div
+                className="alert alert-secondary text-center"
+                style={{ cursor: loadNewHoaxesProgress ? 'not-allowed' : 'pointer' }} onClick={loadNewHoaxesProgress ? () => { } : loadNewHoaxes}
+            >{loadNewHoaxesProgress ? <Spinner /> : t('There are new hoaxes')}</div>}
             {content.map(hoax => {
-                return <HoaxView key={hoax.id} hoax={hoax} />
+                return <HoaxView key={hoax.id} hoax={hoax} onDeleteHoax={onDeleteHoaxSuccess} />
             })
             }
             {!last && <div
-                className="alert alert-secondary text-center mt-1" style={{ cursor: loadOldHoaxesProgress ? 'not-allowed' : 'pointer' }} onClick={loadOldHoaxesProgress ? () => { } :  loadOldHoaxes } >
+                className="alert alert-secondary text-center mt-1" style={{ cursor: loadOldHoaxesProgress ? 'not-allowed' : 'pointer' }} onClick={loadOldHoaxesProgress ? () => { } : loadOldHoaxes} >
                 {loadOldHoaxesProgress ? <Spinner /> : t('Load old hoaxes')}</div>}
         </div>
     );
