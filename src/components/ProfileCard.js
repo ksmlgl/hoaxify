@@ -4,10 +4,11 @@ import { useSelector, useDispatch } from 'react-redux'
 import ProfileImageWithDefault from '../components/ProfileImageWithDefault'
 import { useTranslation } from 'react-i18next';
 import Input from '../components/input'
-import { updateUser } from '../api/apiCalls'
+import { deleteUser, updateUser } from '../api/apiCalls'
 import { useApiProgress } from '../shared/ApiProgress';
 import ButtonWithProgress from './ButtonWithProgress';
-import {updateSuccess} from '../redux/authActions'
+import { updateSuccess } from '../redux/authActions'
+import Modal from '../components/Modal'
 
 const ProfileCard = (props) => {
 
@@ -22,6 +23,8 @@ const ProfileCard = (props) => {
     const [newImage, setNewImage] = useState();
     const [validationErrors, setValidationErrors] = useState({});
     const dispatch = useDispatch();
+
+    const [modalVisible, setModalVisible] = useState(false);
 
     const pathUserName = routeParams.username;
 
@@ -97,8 +100,20 @@ const ProfileCard = (props) => {
 
     const pendingApiCall = useApiProgress('put', '/api/1.0/users/' + username);
 
+    const pendingDeleteUserApiCall = useApiProgress('delete', `/api/1.0/users/${username}`, true);
+
 
     const { displayName: displayNameError, image: imageError } = validationErrors;
+
+
+    const onClickDelete = async () => {
+        await deleteUser(username);
+        setModalVisible(false);
+    }
+
+    const onClickCancel = () => {
+        setModalVisible(false);
+    }
 
     return (
         <div className="card text-center">
@@ -118,10 +133,20 @@ const ProfileCard = (props) => {
                         <>
                             <h3>{displayName}@{username}</h3>
                             {editable &&
-                                <button className="btn btn-success d-inline-flex" onClick={() => setInEditMode(true)}>
-                                    <span className="material-icons">edit</span>
-                                    {t('Edit')}
-                                </button>}
+                                <>
+                                    <button className="btn btn-success d-inline-flex" onClick={() => setInEditMode(true)}>
+                                        <span className="material-icons">edit</span>
+                                        {t('Edit')}
+                                    </button>
+                                    <div className="pt-2">
+                                        <button className="btn btn-danger d-inline-flex" onClick={() => { setModalVisible(true); }}>
+                                            <span className="material-icons">directions_run</span>
+                                            {t('Delete My Account')}
+                                        </button>
+                                    </div>
+                                </>
+
+                            }
                         </>)
                 }
                 {inEditMode &&
@@ -131,7 +156,7 @@ const ProfileCard = (props) => {
                             <Input label={t("Change Display Name")} defaultValue={displayName} onChange={(event) => { setUpdatedDisplayName(event.target.value); }}
                                 error={displayNameError}
                             />
-                            <Input type="file" onChange={onChangeFile} error = {imageError}/>
+                            <Input type="file" onChange={onChangeFile} error={imageError} />
                             <div>
                                 <ButtonWithProgress
                                     className="btn btn-primary d-inline-flex"
@@ -160,6 +185,14 @@ const ProfileCard = (props) => {
                     )
                 }
             </div>
+            <Modal visible={modalVisible}
+                onClickCancel={onClickCancel}
+                onClickOk={onClickDelete}
+                message={t('Are you sure to delete your account?')}
+                title={t('Delete My Account')}
+                okButton={t('Delete My Account')}
+                pendingApiCall={pendingDeleteUserApiCall}
+            />
         </div >
     );
 };

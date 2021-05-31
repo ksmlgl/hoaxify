@@ -4,7 +4,7 @@ import ButtonWithProgress from './ButtonWithProgress'
 const Modal = (props) => {
 
     const { t } = useTranslation();
-    const { visible, onClickCancel, onClickOk, message, pendingApiCall } = props;
+    const { visible, onClickCancel, onClickOk, message, pendingApiCall, title, okButton } = props;
 
     let className = 'modal fade';
     if (visible) {
@@ -15,7 +15,7 @@ const Modal = (props) => {
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title" >{t('Delete Hoax')}</h5>
+                        <h5 className="modal-title" >{title}</h5>
                     </div>
                     <div className="modal-body">
                         {message}
@@ -25,7 +25,7 @@ const Modal = (props) => {
                         <ButtonWithProgress type="button" className="btn btn-danger" onClick={onClickOk}
                             pendingApiCall={pendingApiCall}
                             disabled = {pendingApiCall}
-                            text={t('Delete Hoax')}
+                            text={okButton}
                         />
                     </div>
                 </div>
