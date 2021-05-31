@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import ProfileImageWithDefault from '../components/ProfileImageWithDefault'
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import Input from '../components/input'
 import { deleteUser, updateUser } from '../api/apiCalls'
 import { useApiProgress } from '../shared/ApiProgress';
 import ButtonWithProgress from './ButtonWithProgress';
-import { updateSuccess } from '../redux/authActions'
+import { logoutSuccess, updateSuccess } from '../redux/authActions'
 import Modal from '../components/Modal'
 
 const ProfileCard = (props) => {
@@ -23,6 +23,7 @@ const ProfileCard = (props) => {
     const [newImage, setNewImage] = useState();
     const [validationErrors, setValidationErrors] = useState({});
     const dispatch = useDispatch();
+    const history = useHistory();
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -109,6 +110,8 @@ const ProfileCard = (props) => {
     const onClickDelete = async () => {
         await deleteUser(username);
         setModalVisible(false);
+        dispatch(logoutSuccess());
+        history.push('/');
     }
 
     const onClickCancel = () => {
