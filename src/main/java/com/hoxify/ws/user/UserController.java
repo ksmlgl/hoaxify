@@ -93,8 +93,8 @@ public class UserController {
 	}
 
 	@DeleteMapping("/users/{username}")
-	GenericResponse deleteUser(@PathVariable String username, @CurrentUser User loggedInUser){
-		userService.deleteUser(username,loggedInUser);
+	GenericResponse deleteUser(@PathVariable String username){
+		userService.deleteUser(username);
 		return new GenericResponse("User is removed");
 	}
 

@@ -26,13 +26,10 @@ public class UserService {
 
 	FileService fileService;
 
-	HoaxService hoaxService;
-
-	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, FileService fileService,HoaxService hoaxService) {
+	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, FileService fileService) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.fileService = fileService;
-		this.hoaxService = hoaxService;
 	}
 
 	public void save(User user) {
@@ -71,12 +68,12 @@ public class UserService {
 		return userRepository.save(inDB);
 	}
 
-	public void deleteUser(String username, User loggedInUser) {
+	public void deleteUser(String username) {
 		User inDB = getByUsername(username);
-		if(inDB.getId() != loggedInUser.getId()){
-			throw new AuthorizationException();
-		}
-		hoaxService.deleteHoaxesOfUsers(inDB);
+
+		//hoaxService.deleteHoaxesOfUsers(inDB);
+		fileService.deleteAllStoragedFilesForUser(inDB);
+
 		userRepository.delete(inDB);
 	}
 }

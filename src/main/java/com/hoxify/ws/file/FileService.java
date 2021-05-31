@@ -1,6 +1,7 @@
 package com.hoxify.ws.file;
 
 import com.hoxify.ws.configuration.AppConfiguration;
+import com.hoxify.ws.user.User;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -105,5 +107,14 @@ public class FileService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void deleteAllStoragedFilesForUser(User inDB) {
+		deleteProfileImage(inDB.getImage());
+		List<FileAttachment> byHoaxUser = fileAttachmentRepository.findByHoaxUser(inDB);
+		for(FileAttachment file:byHoaxUser){
+			deleteAttachmentFile(file.getName());
+		}
+
 	}
 }
