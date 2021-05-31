@@ -108,4 +108,16 @@ public class HoaxService {
 		}
 		hoaxRepository.deleteById(id);
 	}
+
+	public void deleteHoaxesOfUsers(User user){
+		Specification<Hoax> userOwned = userIs(user);
+		List<Hoax> hoaxesToBeRemoved = hoaxRepository.findAll(userOwned);
+		hoaxRepository.deleteAll(hoaxesToBeRemoved);
+	}
+
+	private Specification<Hoax> userIs(User user) {
+		return (root, query, criteriaBuilder) ->{
+			return criteriaBuilder.equal(root.get("user"), user);
+		};
+	}
 }

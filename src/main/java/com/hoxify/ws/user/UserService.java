@@ -1,7 +1,9 @@
 package com.hoxify.ws.user;
 
+import com.hoxify.ws.error.AuthorizationException;
 import com.hoxify.ws.error.NotFoundException;
 import com.hoxify.ws.file.FileService;
+import com.hoxify.ws.hoax.HoaxService;
 import com.hoxify.ws.user.vm.UserUpdateVM;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,10 +26,13 @@ public class UserService {
 
 	FileService fileService;
 
-	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, FileService fileService) {
+	HoaxService hoaxService;
+
+	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, FileService fileService,HoaxService hoaxService) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.fileService = fileService;
+		this.hoaxService = hoaxService;
 	}
 
 	public void save(User user) {
@@ -64,5 +69,14 @@ public class UserService {
 			fileService.deleteProfileImage(oldImageName);
 		}
 		return userRepository.save(inDB);
+	}
+
+	public void deleteUser(String username, User loggedInUser) {
+		User inDB = getByUsername(username);
+		if(inDB.getId() != loggedInUser.getId()){
+			throw new AuthorizationException();
+		}
+		hoaxService.deleteHoaxesOfUsers(inDB);
+		userRepository.delete(inDB);
 	}
 }

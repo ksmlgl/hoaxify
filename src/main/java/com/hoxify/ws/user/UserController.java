@@ -92,4 +92,10 @@ public class UserController {
 		return ResponseEntity.ok(hoaxService.getOldHoaxesOfUser(user, id, page).map(HoaxVM::new));
 	}
 
+	@DeleteMapping("/users/{username}")
+	GenericResponse deleteUser(@PathVariable String username, @CurrentUser User loggedInUser){
+		userService.deleteUser(username,loggedInUser);
+		return new GenericResponse("User is removed");
+	}
+
 }
