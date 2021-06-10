@@ -36,9 +36,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable();
 		http.headers().frameOptions().disable();
-		http.httpBasic().authenticationEntryPoint(new AuthEntryPoint());
+
+		http.exceptionHandling().authenticationEntryPoint(new AuthEntryPoint());
 		http
-				.authorizeRequests().antMatchers(HttpMethod.POST, "/api/1.0/auth").authenticated()
+				.authorizeRequests()
 				.antMatchers(HttpMethod.PUT, "/api/1.0/users/{username}").authenticated()
 				.antMatchers(HttpMethod.POST, "/api/1.0/hoaxes").authenticated()
 				.antMatchers(HttpMethod.POST, "/api/1.0/hoax-attachments").authenticated()

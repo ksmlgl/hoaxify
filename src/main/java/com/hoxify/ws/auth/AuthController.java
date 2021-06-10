@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
 	@Autowired
-	UserRepository userRepository;
+	AuthService authService;
 
 	@PostMapping("/api/1.0/auth")
-	UserVM handleAuthentication(@CurrentUser User user){
+	AuthResponse handleAuthentication(@RequestBody Credentials credentials){
+		return authService.authenticate(credentials);
 
-		return new UserVM(user);
 	}
 
 }
