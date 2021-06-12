@@ -1,6 +1,7 @@
 package com.hoxify.ws.auth;
 
 import com.hoxify.ws.user.User;
+import com.hoxify.ws.user.UserRepository;
 import com.hoxify.ws.user.UserService;
 import com.hoxify.ws.user.vm.UserVM;
 import io.jsonwebtoken.Jwts;
@@ -15,29 +16,32 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
-	UserService userService;
+	UserRepository userRepository;
 
 	PasswordEncoder passwordEncoder;
 
-	public AuthService(UserService userService, PasswordEncoder passwordEncoder){
-		this.userService = userService;
+	public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 	}
-	public AuthResponse authenticate(Credentials credentials) {
 
-		User inDB = userService.getByUsername(credentials.getUsername());
+	public AuthResponse authenticate(Credentials credentials) {
+		User inDB = userRepository.findByUsername(credentials.getUsername());
+		if (inDB == null) {
+			throw new AuthenticationException();
+		}
 
 		boolean matches = passwordEncoder.matches(credentials.getPassword(), inDB.getPassword());
 
-		if(matches){
-			UserVM user = new UserVM(inDB);
-			String token = Jwts.builder().setSubject(""+inDB.getId()).signWith(SignatureAlgorithm.HS512, "my-app-secret").compact();
-			AuthResponse response = new AuthResponse();
-			response.setUser(user);
-			response.setToken(token);
-			return response;
+		if (!matches) {
+			throw new AuthenticationException();
 		}
-		return null;
+		UserVM user = new UserVM(inDB);
+		String token = Jwts.builder().setSubject("" + inDB.getId()).signWith(SignatureAlgorithm.HS512, "my-app-secret").compact();
+		AuthResponse response = new AuthResponse();
+		response.setUser(user);
+		response.setToken(token);
+		return response;
 
 
 	}
