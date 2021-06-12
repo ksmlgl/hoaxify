@@ -30,7 +30,7 @@ const TopBar = props => {
     }, [isLoggedIn])
 
     const menuClickTracker = (event) => {
-        if(menuArea.current === null || !menuArea.current.contains(event.target)){
+        if(menuArea.current !==undefined && ( menuArea.current === null || !menuArea.current.contains(event.target))){
             setMenuVisible(false);
         }
     }
