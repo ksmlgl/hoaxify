@@ -20,7 +20,7 @@ jobs:
       with:
         java-version: 8.0.282+8
         distribution: 'adopt'
-    - run: npm ci
+    - run: rm -f package-lock.json && npm install
       working-directory: ./frontend
     - run: npm run build --if-present
       working-directory: ./frontend
