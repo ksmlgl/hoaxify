@@ -51,6 +51,6 @@ jobs:
         username: ${{secrets.USERNAME}}
         script: |
           pkill -u kasimaligul 'java'
-          nohup java -jar -Djava.security.edge=file:/dev/./urandom ws-0.0.1-SNAPSHOT.jar --spring.profiles.active=production &
+          nohup java -jar -Djava.security.edg=file:/dev/./urandom ws-0.0.1-SNAPSHOT.jar --spring.profiles.active=production &
           
         
