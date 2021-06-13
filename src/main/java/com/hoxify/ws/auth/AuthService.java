@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author KSM
@@ -23,9 +25,12 @@ public class AuthService {
 
 	PasswordEncoder passwordEncoder;
 
-	public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+	TokenRepository tokenRepository;
+
+	public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenRepository tokenRepository) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.tokenRepository = tokenRepository;
 	}
 
 	public AuthResponse authenticate(Credentials credentials) {
@@ -40,7 +45,13 @@ public class AuthService {
 			throw new AuthenticationException();
 		}
 		UserVM user = new UserVM(inDB);
-		String token = Jwts.builder().setSubject("" + inDB.getId()).signWith(SignatureAlgorithm.HS512, "my-app-secret").compact();
+		String token = generateRandomToken();
+
+		Token tokenEntity = new Token();
+		tokenEntity.setToken(token);
+		tokenEntity.setUser(inDB);
+		tokenRepository.save(tokenEntity);
+
 		AuthResponse response = new AuthResponse();
 		response.setUser(user);
 		response.setToken(token);
@@ -52,17 +63,15 @@ public class AuthService {
 	@Transactional
 	public UserDetails getUserDetails(String token) {
 
-		JwtParser jwtParser = Jwts.parser().setSigningKey("my-app-secret");
-		try{
-			jwtParser.parse(token);
-			Claims body = jwtParser.parseClaimsJws(token).getBody();
-			Long userId = Long.valueOf(body.getSubject());
-			User user = userRepository.getOne(userId);
-			return (User) ((HibernateProxy) user).getHibernateLazyInitializer().getImplementation();
-		}catch (Exception exception){
-			exception.printStackTrace();
+		Optional<Token> optionalToken = tokenRepository.findById(token);
+		if(!optionalToken.isPresent()){
+			return null;
 		}
+		return optionalToken.get().getUser();
 
-		return null;
+	}
+
+	private String generateRandomToken() {
+		return UUID.randomUUID().toString().replaceAll("-", "");
 	}
 }
