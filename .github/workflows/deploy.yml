@@ -31,7 +31,7 @@ jobs:
         cp -a frontend/build/. ws/src/main/resources/static/
       
     - name: Build Spring
-      run: mvn -B package --file pom.xml
+      run: mvn -B package -Dmaven.test.skip=true --file pom.xml
       working-directory: ./ws
       
     - name: SFTP Deploy
