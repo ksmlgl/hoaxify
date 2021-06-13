@@ -49,6 +49,7 @@ jobs:
         key: ${{secrets.SSH}}
         host: ${{secrets.IP}}
         username: ${{secrets.USERNAME}}
+        script_stop: true
         script: |
           pkill -u kasimaligul 'java'
           nohup java -jar -Djava.security.edg=file:/dev/./urandom ws-0.0.1-SNAPSHOT.jar --spring.profiles.active=production &
