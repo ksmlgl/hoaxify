@@ -2,6 +2,7 @@ package com.hoxify.ws.auth;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.hoxify.ws.shared.CurrentUser;
+import com.hoxify.ws.shared.GenericResponse;
 import com.hoxify.ws.user.User;
 import com.hoxify.ws.user.UserRepository;
 import com.hoxify.ws.user.vm.UserVM;
@@ -25,4 +26,10 @@ public class AuthController {
 
 	}
 
+	@PostMapping("/api/1.0/logout")
+	GenericResponse handleLogout(@RequestHeader(name="Authorization") String authorization){
+		String token = authorization.substring(7);
+		authService.clearToken(token);
+		return new GenericResponse("Logout success");
+	}
 }
